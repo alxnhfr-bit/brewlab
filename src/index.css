@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+body {
+  margin: 0;
+  background: #F5F5F3;
+  font-family: 'Outfit', 'Helvetica Neue', sans-serif;
+}
