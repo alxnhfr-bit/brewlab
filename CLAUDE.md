@@ -53,15 +53,20 @@ points now.
 - No em dashes in code, content, comments, or commit messages (Alex's standing preference across
   projects). Use commas, parentheses, semicolons, periods.
 
-## Open decisions (discuss before building)
+## Decided (2026-07-07)
 
-- Tech stack for native: most likely Capacitor (wraps a web app, ships to iOS/Android app stores,
-  reuses web skills) vs. a fully native framework (React Native, Flutter, Swift/Kotlin). Capacitor is
-  the lowest-friction path if keeping React; worth confirming against Alex's actual goals (App Store
-  review, offline behavior, native API needs like notifications/haptics).
-- Backend: currently zero persistence. A native B2C app in production will need real auth and a real
-  database at minimum for any user accounts, saved recipes, or purchases.
-- Scope of "brewing companion" vs "commerce" (BEANS/GEAR catalogs suggest an affiliate/shop angle,
-  similar in spirit to sundayatlas's affiliate thesis, but unconfirmed as a real business model here).
-- Whether the current design/animation direction is being kept, or this is a from-scratch rebuild
-  keeping only the concept (coffee brewing guide).
+- Native stack: **Capacitor** wrapping the React app. Decided on cost (zero cash delta vs
+  alternatives, lowest time cost) and fit (content/workflow app, not gesture-heavy).
+- Backend: **Supabase** (managed auth + Postgres), arrives in v1.5; v1 is fully offline/local.
+- Scope: **brewing companion only**. Commerce/shop is cut; beans/gear survive only as a personal
+  "Bean Shelf" library concept in v2.
+- Design: keep the warm coffee-shop concept, redo the execution. Full UX/IA direction lives in
+  [docs/UX-DIRECTION.md](docs/UX-DIRECTION.md) (3-tab IA: Brew / Journal / Library, brew session as
+  modal state, 1-tap time-to-timer as governing metric, "The Pour" first-run, 5 signature
+  motion/haptic moments, v1 -> v1.5 -> v2 release plan). That document is the reference for all
+  overhaul build work.
+
+## Open decisions
+
+- Pricing/monetization (research suggests free or cheap one-time unlock; subscriptions rejected).
+- App name/branding check ("BrewLab" availability on both stores has not been verified).
