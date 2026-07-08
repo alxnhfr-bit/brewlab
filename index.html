@@ -5,9 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>BrewLab</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Static styles for the pre-mount placeholder below. Served as-is on
+   GitHub Pages (where the app bundle cannot run); in the app itself
+   React replaces the #root children on mount, so this also acts as a
+   brief branded splash. Hex values are intentional here: tokens.css
+   is part of the app bundle and is not available on the static host. */
+.ph-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: #F5F5F3;
+  color: #26231F;
+  font-family: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: center;
+  padding: 32px 24px;
+}
+.ph-mark {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 20px;
+}
+.ph-tag {
+  font-size: 15px;
+  color: #6B6B65;
+  margin-top: 8px;
+}
+.ph-pill {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #F0E4D6;
+  color: #9C6B43;
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ph-note {
+  font-size: 14px;
+  color: #6B6B65;
+  line-height: 1.7;
+  max-width: 340px;
+  margin-top: 24px;
+}
+@media (prefers-color-scheme: dark) {
+  .ph-wrap { background: #1C1917; color: #F0EDE8; }
+  .ph-tag, .ph-note { color: #A8A29A; }
+  .ph-pill { background: #382C21; color: #BE8D62; }
+}
+</style>
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <div class="ph-wrap">
+    <svg width="72" height="72" viewBox="0 0 48 48" fill="none" stroke="#4A6B5D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M14 27 Q11 21 14 15 Q17 9 14 3" opacity="0.35" transform="translate(4 8)" />
+      <ellipse cx="24" cy="21" rx="13" ry="2.8" />
+      <path d="M11 21 L19.5 36 H28.5 L37 21" />
+      <path d="M19 39 H29" />
+      <path d="M16 27 Q24 30 32 27" stroke="#9C6B43" />
+    </svg>
+    <div class="ph-mark">BrewLab</div>
+    <div class="ph-tag">Your coffee, step by step.</div>
+    <div class="ph-pill">Revamp in progress</div>
+    <div class="ph-note">
+      The prototype that lived here is being rebuilt from the ground up
+      as a native brewing companion. Fresh cup soon.
+    </div>
+  </div>
+</div>
 <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
