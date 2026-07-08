@@ -15,34 +15,47 @@ Vite + Vercel + Supabase web app going through its own auth/backend buildout. Br
 evaluated independently: native-first (Capacitor or similar likely, since the goal is an app store
 presence) rather than web-first.
 
-## Current state (as of 2026-07-05, post-migration)
+## Current state (as of 2026-07-07, revamp v1)
 
-Migrated off the single-file prototype into a proper **Vite + React 18 + TypeScript** project
-(strict mode, no `any`). The legacy file is preserved at
-[legacy-prototype.html.bak](legacy-prototype.html.bak) for reference only, not loaded by the app.
+The overhaul defined in [docs/UX-DIRECTION.md](docs/UX-DIRECTION.md) is implemented as a working web
+app (Capacitor wrapper not yet added). Vite + React 18 + TypeScript strict, zustand persisted to
+localStorage. The legacy prototype survives only as
+[legacy-prototype.html.bak](legacy-prototype.html.bak).
 
 Structure:
-- [src/lib/theme.ts](src/lib/theme.ts): `C` (color palette) and `MC` (per-method accent colors for
-  v60/aeropress/coldbrew), plus the `BrewMethodId` type.
-- [src/lib/data.ts](src/lib/data.ts): typed data arrays `METHODS`, `ROASTS`, `PREFS`, `RECIPES` (7
-  guided recipes across v60/aeropress/coldbrew), `BEANS` (5 sample listings), `GEAR` (6 sample
-  listings), `NAV` (bottom nav config), with `Recipe`/`Bean`/`Gear`/etc. interfaces.
-- [src/lib/format.ts](src/lib/format.ts): `fmt()` time-formatting helper.
-- [src/components/icons.tsx](src/components/icons.tsx): hand-drawn SVG icon components (`V60I`,
-  `ApI`, `CbI`, `TmI`, `ScI`, `CtI`, `BkI`, `CkI`, `ChI`, `XI`, `BnI`) plus the `MI` method-to-icon map.
-- [src/components/Shared.tsx](src/components/Shared.tsx): `Lbl` and `Tog` shared UI primitives.
-- Screens in `src/components/`: `HomeScreen` (scroll-driven hero animation + brand reveal + CTA),
-  `RecipesScreen` (method filter + recipe list), `CalcScreen` (brew ratio calculator), `TimerScreen`
-  (guided step timer), `ShopScreen` (bean/gear catalog with local cart state).
-- [src/BrewLab.tsx](src/BrewLab.tsx): root component, home/tab routing.
+- [src/styles/tokens.css](src/styles/tokens.css): all design tokens as CSS variables (`--bl-*`),
+  light + dark themes (`[data-theme="dark"]`), method accents (v60 sage / aeropress clay / coldbrew
+  slate), caramel reserved for journal moments, shared keyframes. Components use inline styles
+  referencing these vars only, no hardcoded hex.
+- [src/lib/types.ts](src/lib/types.ts): all shared types (`Recipe`, `SessionPlan`, `ActiveSession`,
+  `JournalEntry`, `Tweak`, `TasteTag`, ...).
+- [src/lib/store.ts](src/lib/store.ts): zustand store (persist key `brewlab-store`): onboarding
+  flag, settings, journal, favorites, per-recipe dose memory, pending taste tweaks, and the active
+  brew session with all engine actions.
+- [src/lib/session.ts](src/lib/session.ts): wall-clock session math. Steps run on absolute end
+  timestamps (`stepEndsAt`); pause captures remaining ms; UI re-renders via
+  [src/lib/useNow.ts](src/lib/useNow.ts). Never setInterval-accumulated state.
+- [src/lib/coaching.ts](src/lib/coaching.ts): taste-chip -> conservative adjustment rules table.
+- [src/lib/recipes.ts](src/lib/recipes.ts) + [src/lib/recipes-extra.ts](src/lib/recipes-extra.ts):
+  12 bundled recipes with per-step cumulative `waterTargetG` and optional `why` tips.
+- [src/lib/haptics.ts](src/lib/haptics.ts): haptics abstraction (web Vibration API now,
+  @capacitor/haptics later).
+- [src/ui/](src/ui): `primitives.tsx` (Card, Chip, PrimaryButton, Sheet, Segmented, Mono, ...) and
+  `icons.tsx` (Phosphor light-weight re-exports + custom 24px method glyphs).
+- [src/BrewLab.tsx](src/BrewLab.tsx): shell. 3 tabs (Brew / Journal / Library), brew session as a
+  full-screen modal overlay (`SessionOverlay`), `NowBrewingBar` mini-bar when minimized, first-run
+  gate to `ThePour`, theme attribute management.
+- Screens in `src/screens/`: `brew/` (BrewTab with Brew Again hero + pending-tweak chip,
+  RecipeDetail, DialInSheet, QuickBrewSheet), `session/` (Get Ready pre-roll, running session with
+  pour targets + ring + scrubber, Brew Complete with rating/taste chips/coaching card),
+  `journal/` (auto-collected log, editable EntryDetail, ManualLogSheet), `library/` (favorites with
+  1-tap brew, v1.5/v2 placeholders, SettingsSheet with theme/haptics/export), `onboarding/`
+  (ThePour, CSS/SVG animated first run).
 
-The home screen's scroll-scrubbed animation used to inline 8 frames as base64 JPEGs directly in the
-JS bundle (~220KB of it). These are now real files at `public/frames/frame-00.jpg` through
-`frame-07.jpg`, referenced by path instead of inlined.
-
-Nothing persists yet (no localStorage, no backend). Bean/gear data is static, not a real catalog or
-commerce integration. No auth. No native wrapper yet. `npm run dev` / `npm run build` are the entry
-points now.
+Verified end to end in the browser: 1-tap brew-again loop, wall-clock timer with pause/scrub/
+auto-advance, minimize/mini-bar, taste-chip coaching persisting to the next brew, journal auto-log,
+dark mode, reload persistence. No backend yet (Supabase lands in v1.5), no native wrapper yet
+(Capacitor next). `npm run dev` / `npm run build`.
 
 ## What NOT to do
 

@@ -1,3 +1,5 @@
+@import "./styles/tokens.css";
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,8 +10,21 @@
   width: 0;
 }
 
-body {
+html, body {
   margin: 0;
-  background: #F5F5F3;
-  font-family: 'Outfit', 'Helvetica Neue', sans-serif;
+  background: var(--bl-bg);
+  color: var(--bl-ink);
+  font-family: var(--bl-font-ui);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: var(--bl-font-ui);
+  color: inherit;
+}
+
+input, textarea, select {
+  font-family: var(--bl-font-ui);
+  color: inherit;
 }

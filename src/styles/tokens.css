@@ -1,0 +1,84 @@
+:root {
+  --bl-bg: #F5F5F3;
+  --bl-bg-translucent: rgba(245, 245, 243, 0.88);
+  --bl-card: #FFFFFF;
+  --bl-line: #E0E0DD;
+  --bl-ink: #26231F;
+  --bl-muted: #6B6B65;
+  --bl-faint: #A5A5A0;
+  --bl-brand: #4A6B5D;
+  --bl-brand-ink: #FFFFFF;
+  --bl-brand-soft: #E8EEEA;
+  --bl-v60: #5B7F6E;
+  --bl-v60-soft: #DCE6DF;
+  --bl-aero: #B06A4A;
+  --bl-aero-soft: #EFDFD5;
+  --bl-cold: #5E7A8C;
+  --bl-cold-soft: #DDE6EC;
+  --bl-amber: #C99A5B;
+  --bl-caramel: #9C6B43;
+  --bl-caramel-soft: #F0E4D6;
+  --bl-danger: #A3402E;
+  --bl-scrim: rgba(38, 35, 31, 0.42);
+
+  --bl-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --bl-font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  --bl-font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --bl-radius-sm: 10px;
+  --bl-radius: 14px;
+  --bl-radius-lg: 20px;
+
+  --bl-shadow-card: 0 1px 6px rgba(38, 35, 31, 0.05);
+  --bl-shadow-float: 0 8px 32px rgba(38, 35, 31, 0.14);
+}
+
+[data-theme="dark"] {
+  --bl-bg: #1C1917;
+  --bl-bg-translucent: rgba(28, 25, 23, 0.88);
+  --bl-card: #2A2622;
+  --bl-line: #3B362F;
+  --bl-ink: #F0EDE8;
+  --bl-muted: #A8A29A;
+  --bl-faint: #6E6961;
+  --bl-brand: #6E9080;
+  --bl-brand-ink: #16201B;
+  --bl-brand-soft: #2C3630;
+  --bl-v60: #7FA391;
+  --bl-v60-soft: #2C3A33;
+  --bl-aero: #C98F73;
+  --bl-aero-soft: #3C2E26;
+  --bl-cold: #86A0B2;
+  --bl-cold-soft: #2A343C;
+  --bl-amber: #D3A96F;
+  --bl-caramel: #BE8D62;
+  --bl-caramel-soft: #382C21;
+  --bl-danger: #C96A57;
+  --bl-scrim: rgba(0, 0, 0, 0.55);
+
+  --bl-shadow-card: 0 1px 6px rgba(0, 0, 0, 0.25);
+  --bl-shadow-float: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes bl-sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bl-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bl-pop {
+  0% { transform: scale(0.96); opacity: 0; }
+  60% { transform: scale(1.015); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
