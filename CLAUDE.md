@@ -54,8 +54,17 @@ Structure:
 
 Verified end to end in the browser: 1-tap brew-again loop, wall-clock timer with pause/scrub/
 auto-advance, minimize/mini-bar, taste-chip coaching persisting to the next brew, journal auto-log,
-dark mode, reload persistence. No backend yet (Supabase lands in v1.5), no native wrapper yet
-(Capacitor next). `npm run dev` / `npm run build`.
+dark mode, reload persistence. No backend yet (Supabase lands in v1.5). `npm run dev` /
+`npm run build` / `npm run cap:sync`.
+
+Capacitor integration (JS side) is done: [capacitor.config.ts](capacitor.config.ts) (appId
+`com.alxnhfr.brewlab`, changeable until first store submission), haptics via @capacitor/haptics
+with web Vibration fallback, [src/lib/native.ts](src/lib/native.ts) pre-schedules local
+notifications at every remaining step boundary and completion (the load-bearing background-timer
+architecture) and holds keep-awake during sessions; all no-ops on web. Fonts are bundled locally
+via @fontsource (offline requirement); the Google Fonts link in index.html remains ONLY for the
+static GitHub Pages placeholder. `npx cap add ios` / `npx cap add android` are NOT run yet: this
+machine lacks Xcode (CLT only), CocoaPods, and Android Studio. Install those, then add platforms.
 
 ## What NOT to do
 
