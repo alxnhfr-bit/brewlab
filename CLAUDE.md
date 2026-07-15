@@ -91,4 +91,14 @@ machine lacks Xcode (CLT only), CocoaPods, and Android Studio. Install those, th
 ## Open decisions
 
 - Pricing/monetization (research suggests free or cheap one-time unlock; subscriptions rejected).
-- App name/branding check ("BrewLab" availability on both stores has not been verified).
+- **Public app name (BrewLab is blocked, rename required).** Checked 2026-07-15: an exact-name
+  "BrewLab" coffee app exists and is actively updated on iOS (Apple requires unique display names,
+  so the bare name is unavailable), two more BrewLab-named coffee apps crowd iOS, Android has a live
+  "BrewLab" coffee guide plus an actively developed "BrewLab: Pour Over Coffee" near-clone, and
+  there are senior trademark/business users in the US, UK, and EU (LaMotte, Brewlab Ltd UK, Munich
+  and Dublin businesses); USPTO treats "BREW LAB" as descriptive. Verdict: keep BrewLab as internal
+  repo codename only, never as the public brand. Candidate replacements pending clearance
+  (iTunes Search API, Play search, USPTO, EUIPO/TMview, .app domain): Pourfect, Steepwise, Dialed,
+  Bloomly, Kurve. Once a name is picked: register the .app domain, set the matching bundle id in
+  capacitor.config.ts (currently placeholder com.alxnhfr.brewlab, changeable until first store
+  submission), and consider an EUIPO class 9/42 filing before launch (developer is EU-based).
