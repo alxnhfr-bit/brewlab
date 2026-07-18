@@ -98,7 +98,17 @@ machine lacks Xcode (CLT only), CocoaPods, and Android Studio. Install those, th
   there are senior trademark/business users in the US, UK, and EU (LaMotte, Brewlab Ltd UK, Munich
   and Dublin businesses); USPTO treats "BREW LAB" as descriptive. Verdict: keep BrewLab as internal
   repo codename only, never as the public brand. Candidate replacements pending clearance
-  (iTunes Search API, Play search, USPTO, EUIPO/TMview, .app domain): Pourfect, Steepwise, Dialed,
+  (iTunes Search API, Play search, USPTO, EUIPO/TMview, .app domain): Pourfect, Steepwise,
   Bloomly, Kurve. Once a name is picked: register the .app domain, set the matching bundle id in
   capacitor.config.ts (currently placeholder com.alxnhfr.brewlab, changeable until first store
   submission), and consider an EUIPO class 9/42 filing before launch (developer is EU-based).
+- **"Dialed" was cleared and REJECTED (2026-07-15).** Alex's preferred candidate failed clearance:
+  DIALED is a LIVE registered US trademark in class 9 for mobile app software (Ad Hoc Labs, Reg
+  6206439, since 2020, and they ship an iOS app named "Dialed"), a second DIALED mark in class 30
+  (coffee) has a Notice of Allowance and is expected to register early 2027 (dialed.coffee brand),
+  the bare name "Dialled" is already taken on iOS BY a coffee app, roughly a dozen coffee/espresso
+  apps already trade on Dialed/Dialed In across both stores (including a Germany-based "Dialed In -
+  Espresso Logbook", same home market), and dialed.app plus dialed.coffee domains are taken. The
+  Dial'd spelling is technically free on both stores but phonetically identical, so it inherits all
+  of the above confusion risk. EU registers could not be checked via web search (TMview direct query
+  still open) but the US and store findings alone are disqualifying.
