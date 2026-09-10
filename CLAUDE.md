@@ -162,7 +162,22 @@ CocoaPods, and Android Studio. Install those, then add platforms.
   TMEP 1209.03(j) reads it as "BREW", which for a coffee brewing app is arguably generic rather than
   merely descriptive, and generic terms cannot be registered even with acquired distinctiveness.
   It also breaks word of mouth and voice search, and collides with the exact word users type.
-- **"15G" / "15GRMS" checked 2026-09-10: risky, blocked by a real coffee brand.** These finally escape
+- **"15GRMS" re-examined 2026-09-10: VIABLE, the strongest candidate so far.** An earlier note in this
+  file called it blocked; that was too strong and is corrected here. Verified via Apple's iTunes API:
+  no app named 15GRMS, "15 grams" or "15G" exists, and no Food & Drink app surfaces for any of them.
+  The whole `15grms.*` domain set (.com, .app, .coffee) is free. Legally it is the best-positioned name
+  tested: a dose figure says nothing about software, so in class 9 it is arbitrary and properly
+  registrable, unlike anything containing "brew". The UK roaster **15grams** (15 GRAMS LIMITED, company
+  12014931, inc. 2019, Greenwich and Blackheath) has **no trade mark registration found**, so its rights
+  are unregistered passing-off rights, which are territorially narrow and tied to its actual goods:
+  roasted beans (class 30) and cafe services (class 43), not software (class 9). Dropping the vowels
+  also visually separates the two. Residual risks, real but not disqualifying: conceptual overlap with
+  a European coffee brand using the same 15 g rationale, spelling and pronunciation friction, and the
+  fact that the app spans 11 g to 100 g so one fixed number narrows the idea. UK IPO and EUIPO are not
+  web-indexed, so a definitive answer needs a direct query at trademarks.ipo.gov.uk and EUIPO eSearch.
+- **"15G" alone is the weaker half of that pair:** globally it reads as India's Form 15G tax
+  declaration and is confusable with 5G, and 15g.app and 15g.coffee are both taken.
+- **Superseded note (kept for history), the original over-strong reading:** These finally escape
   the descriptiveness trap (a dose figure says nothing about software, so in class 9 it would be
   arbitrary and genuinely registrable, unlike anything containing "brew"). No app holds either name.
   The blocker is prior use in coffee: **15grams** (15grams.co.uk) is an active independent UK
