@@ -141,3 +141,14 @@ CocoaPods, and Android Studio. Install those, then add platforms.
   Dial'd spelling is technically free on both stores but phonetically identical, so it inherits all
   of the above confusion risk. EU registers could not be checked via web search (TMview direct query
   still open) but the US and store findings alone are disqualifying.
+- **"BRRW" checked 2026-09-10: store-available, but weak as a mark.** No iOS app, no Android app, no
+  coffee brand and no indexed USPTO mark uses it, and the feared "borrow" fintech brand does not exist
+  (brrw.com is a domain reseller listing, brrw.app is registered but serves 404, brrw.io has no site;
+  brrw.coffee, brrw.co and getbrrw.app look free). So it clears the store hurdle that killed BrewLab
+  and Dialed. The problem is the opposite one: under TMEP 1209.03(j) a novel spelling that is the
+  phonetic equivalent of a descriptive term is itself merely descriptive (QUIK-PRINT, SHARPIN,
+  URBANHOUZING), so to the extent BRRW reads as "brew" it is just a misspelling of a descriptive word
+  for a brewing app, exactly the trap that made "BREW LAB" descriptive. The tension is structural: the
+  clearer it reads as "brew", the weaker the mark; the more distinctive it is legally, the less it
+  communicates and the harder it is to spell, pronounce or find in store search, which is this app's
+  main discovery channel. EU/DPMA registers still unchecked (not web-indexed).
