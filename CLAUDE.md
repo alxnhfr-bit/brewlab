@@ -162,6 +162,18 @@ CocoaPods, and Android Studio. Install those, then add platforms.
   TMEP 1209.03(j) reads it as "BREW", which for a coffee brewing app is arguably generic rather than
   merely descriptive, and generic terms cannot be registered even with acquired distinctiveness.
   It also breaks word of mouth and voice search, and collides with the exact word users type.
+- **"15G" / "15GRMS" checked 2026-09-10: risky, blocked by a real coffee brand.** These finally escape
+  the descriptiveness trap (a dose figure says nothing about software, so in class 9 it would be
+  arbitrary and genuinely registrable, unlike anything containing "brew"). No app holds either name.
+  The blocker is prior use in coffee: **15grams** (15grams.co.uk) is an active independent UK
+  specialty roaster with shops in Greenwich and Blackheath since 2021, press in Eater and Sprudge,
+  and their name means exactly what ours would, their recommended 15 g dose per cup. 15GRMS is that
+  brand's phonetic equivalent, so it inherits the confusion risk in our own European market, and
+  "N grams" is an established, occupied cafe naming pattern (18 Grams, Hong Kong). Domains: 15g.app
+  and 15g.coffee taken, 15grams.coffee is the roaster; the 15grms.* set is entirely free.
+  "15G" also carries heavy semantic noise: globally it reads as India's Form 15G tax declaration,
+  and it is confusable with 5G. Product critique too: the app spans 11 g to 100 g doses and its whole
+  point is dialling to YOUR dose, so naming it after one fixed number narrows the idea.
 - **Competitor intel found while checking names (worth knowing regardless):** the short-coffee-name
   space is heavily fished, and `brevv` (iOS, "brew perfect coffee") is a near-identical product:
   V60/Chemex/Kalita/AeroPress step-by-step guides, bag scanning, brew logging and rating. Others in
