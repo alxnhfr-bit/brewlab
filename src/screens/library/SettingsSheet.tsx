@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react"
-import { APP_NAME, APP_STRAPLINE } from "../../lib/brand"
+import { APP_NAME, APP_STRAPLINE, PRIVACY_URL, SUPPORT_URL } from "../../lib/brand"
 import { useBrewLab } from "../../lib/store"
 import { haptics } from "../../lib/haptics"
 import { Sheet, Toggle } from "../../ui/primitives"
@@ -56,6 +56,20 @@ function ToggleRow({ label, settingKey }: { label: string; settingKey: "haptics"
   )
 }
 
+/**
+ * Opens a public page in the system browser. target="_blank" is what makes
+ * Capacitor hand the URL to Safari rather than navigating the app's own
+ * WebView, which would strand the user with no way back.
+ */
+function LinkRow({ label, href }: { label: string; href: string }) {
+  return (
+    <a className="p-row" href={href} target="_blank" rel="noreferrer" style={{ ...ROW, textDecoration: "none" }}>
+      {label}
+      <RowValue caret />
+    </a>
+  )
+}
+
 function exportJournal(): void {
   const journal = useBrewLab.getState().journal
   const blob = new Blob([JSON.stringify(journal, null, 2)], { type: "application/json" })
@@ -102,6 +116,9 @@ export function SettingsSheet({ open, onClose, onAppearance }: SettingsSheetProp
             {entryCount === 1 ? "entry" : "entries"}
           </RowValue>
         </button>
+
+        <LinkRow label="Privacy policy" href={PRIVACY_URL} />
+        <LinkRow label="Support" href={SUPPORT_URL} />
 
         <div style={ROW}>
           Version

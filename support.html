@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#FFF4F8" />
+<title>Support - 15GRMS</title>
+<link rel="icon" href="/brewlab/favicon.svg" type="image/svg+xml" />
+<!-- Self-contained: no webfonts, no analytics, no third party requests. -->
+<style>
+:root{--bg:#FFF4F8;--ink:#111111;--muted:#4A4548;--accent:#FF3E9A;--line:#111111}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#111111;--ink:#FFF4F8;--muted:#C9BFC4;--accent:#FF3E9A;--line:#FFF4F8}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.6;padding:0 20px 80px}
+.wrap{max-width:640px;margin:0 auto}
+header{display:flex;align-items:center;gap:12px;padding:28px 0 18px;border-bottom:2px solid var(--line)}
+.mark{width:26px;height:26px;flex-shrink:0;background:var(--accent);display:flex;align-items:center;justify-content:center;
+  clip-path:polygon(100.0% 50.0%,84.8% 59.3%,93.3% 75.0%,75.5% 74.5%,75.0% 93.3%,59.3% 84.8%,50.0% 100.0%,40.7% 84.8%,25.0% 93.3%,24.5% 74.5%,6.7% 75.0%,15.2% 59.3%,0.0% 50.0%,15.2% 40.7%,6.7% 25.0%,24.5% 25.5%,25.0% 6.7%,40.7% 15.2%,50.0% 0.0%,59.3% 15.2%,75.0% 6.7%,75.5% 25.5%,93.3% 25.0%,84.8% 40.7%)}
+.mark span{width:34%;height:34%;border-radius:999px;background:var(--ink)}
+.brand{font-size:20px;font-weight:800;letter-spacing:-0.02em}
+h1{font-size:30px;line-height:1.1;letter-spacing:-0.03em;margin:34px 0 10px;text-transform:uppercase}
+h2{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:34px 0 10px}
+h3{font-size:17px;margin:22px 0 6px;letter-spacing:-0.01em}
+p{margin:0 0 14px}
+.lede{font-size:18px;color:var(--muted)}
+ul{margin:0 0 14px 20px}
+li{margin-bottom:8px}
+.callout{border:2px solid var(--line);border-radius:22px;padding:18px 20px;margin:22px 0}
+a{color:var(--accent)}
+footer{margin-top:44px;padding-top:18px;border-top:2px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><span></span></div>
+    <div class="brand">15GRMS</div>
+  </header>
+
+  <h1>Support</h1>
+  <p class="lede">15GRMS is a brewing companion: guided recipes, a wall clock timer that survives a
+  locked screen, and a journal that fills itself in.</p>
+
+  <div class="callout">
+    <p style="margin:0"><strong>Need a hand, found a bug, or want a recipe added?</strong> Open an
+    issue at <a href="https://github.com/alxnhfr-bit/brewlab/issues">github.com/alxnhfr-bit/brewlab/issues</a>
+    and you will get a reply. No account details are needed to report a problem.</p>
+  </div>
+
+  <h2>Common questions</h2>
+
+  <h3>Does the timer keep running if I lock my phone?</h3>
+  <p>Yes. Each step runs against the clock rather than a counter, and notifications for every
+  remaining step are scheduled in advance, so locking your phone or switching apps will not lose
+  your place. Allow notifications when asked and each step will alert you.</p>
+
+  <h3>Can I change the dose or ratio for a recipe?</h3>
+  <p>Open a recipe and tap Dial in. Adjust the dose, ratio or temperature and every pour target
+  recalculates as you go. Your change is remembered for next time.</p>
+
+  <h3>How do I stop a brew I have already started?</h3>
+  <p>Tap the cross at the top left of the brewing screen, then choose End brew. Choosing Keep
+  brewing instead tucks the timer into a bar above the tabs so it carries on while you use the rest
+  of the app.</p>
+
+  <h3>How do I delete a brew from my journal?</h3>
+  <p>Swipe the row to the left and tap Delete. You can also open the brew and use Delete at the
+  bottom of its detail screen.</p>
+
+  <h3>What are the taste chips for?</h3>
+  <p>After a brew you can tag how it tasted. If something was off, the app suggests one conservative
+  adjustment, and if you save it, the tweak is applied the next time you brew that recipe.</p>
+
+  <h3>Can I get my data out?</h3>
+  <p>Yes. Library, then the settings icon, then Export journal exports everything as JSON.</p>
+
+  <h3>Does it work offline?</h3>
+  <p>Entirely. Recipes and fonts are bundled in the app and it makes no network requests at all.</p>
+
+  <h2>Privacy</h2>
+  <p>15GRMS collects nothing. Everything you record stays on your device. See the
+  <a href="/brewlab/privacy.html">privacy policy</a> for details.</p>
+
+  <footer>15GRMS &middot; <a href="/brewlab/privacy.html">Privacy</a> &middot;
+  <a href="/brewlab/">Home</a></footer>
+</div>
+</body>
+</html>

@@ -107,6 +107,30 @@ Pink light icon only, wired as `favicon.svg` and `apple-touch-icon.png`. Alterna
 `npx cap add ios` / `npx cap add android` are NOT run yet: this machine lacks Xcode (CLT only),
 CocoaPods, and Android Studio. Install those, then add platforms.
 
+## App Store submission checklist
+
+GitHub Pages serves the repo root of `main` at https://alxnhfr-bit.github.io/brewlab/ (verified via
+the Pages API), which is where the two URLs App Store Connect requires now live:
+- Privacy policy: https://alxnhfr-bit.github.io/brewlab/privacy.html ([privacy.html](privacy.html))
+- Support: https://alxnhfr-bit.github.io/brewlab/support.html ([support.html](support.html))
+Both are deliberately self-contained (no webfonts, no analytics, no third party requests): a privacy
+page that loads a font CDN contradicts itself, and embedding Google Fonts has been held to breach the
+GDPR in German courts, which matters since the developer is EU-based. Both URLs are also in
+[src/lib/brand.ts](src/lib/brand.ts) as `PRIVACY_URL` / `SUPPORT_URL` and linked from the Settings
+sheet, because Apple requires the privacy policy to be reachable from inside the app too.
+
+The privacy policy claims the app collects nothing. That is currently TRUE and verified: `src/` has
+zero `fetch`/XHR calls, zero external URLs, no analytics and no backend, fonts and recipes are
+bundled, and the only permissions are notifications and keep-awake. **If Supabase lands in v1.5, the
+policy must be rewritten before that build ships.**
+
+Still blocked on the developer, not on code:
+- **Xcode** (App Store, large download) plus `brew install cocoapods`, then `npx cap add ios`.
+- **Apple Developer Program** enrollment, 99 USD/year, which can take days to approve.
+- App Store Connect's App Privacy questionnaire, which should be answered "Data Not Collected".
+- Support contact currently points at GitHub issues rather than an email address, to avoid publishing
+  a personal address. Swap it in `support.html` and `privacy.html` if a support mailbox is preferred.
+
 ## What NOT to do
 
 - Don't assume this needs to match sundayatlas's stack (Vercel edge functions, Redis, etc.). Decide

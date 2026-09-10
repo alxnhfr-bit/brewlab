@@ -19,3 +19,12 @@ export const APP_TAGLINE = "Your coffee, step by step."
 
 /** Used in the settings footer. */
 export const APP_STRAPLINE = "Pour it right, every time"
+
+/**
+ * Public pages served from GitHub Pages off the repo root. The App Store
+ * requires a privacy policy URL and a separate support URL, and Apple also
+ * expects the privacy policy to be reachable from inside the app, which is
+ * what the Settings rows link to.
+ */
+export const PRIVACY_URL = "https://alxnhfr-bit.github.io/brewlab/privacy.html"
+export const SUPPORT_URL = "https://alxnhfr-bit.github.io/brewlab/support.html"
