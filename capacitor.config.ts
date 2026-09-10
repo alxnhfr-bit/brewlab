@@ -4,18 +4,18 @@ import type { CapacitorConfig } from '@capacitor/cli'
 // permanent on both stores. Derived from the personal GitHub handle for now.
 const config: CapacitorConfig = {
   appId: 'com.alxnhfr.brewlab',
-  appName: 'BrewLab',
+  appName: 'Pourfect',
   webDir: 'dist',
   plugins: {
     SplashScreen: {
       launchShowDuration: 800,
       launchAutoHide: true,
-      backgroundColor: '#F5F5F3',
+      backgroundColor: '#FFF4F8',
       showSpinner: false,
     },
     LocalNotifications: {
       smallIcon: 'ic_stat_notify',
-      iconColor: '#4A6B5D',
+      iconColor: '#FF3E9A',
     },
   },
   ios: {

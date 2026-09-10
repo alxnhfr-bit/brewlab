@@ -1,6 +1,11 @@
-# BrewLab
+# BrewLab (public name: Pourfect)
 
-Coffee brewing companion app: guided recipes, brew ratio calculator, gear/bean catalog.
+Coffee brewing companion app: guided recipes, brew ratio calculator, brew journal.
+
+**Naming:** `brewlab` is the repo codename only, and stays in the repo name, the bundle id
+(`com.alxnhfr.brewlab`) and the persisted store key (`brewlab-store`). The public name in the UI is
+**Pourfect**, a working title held in one constant, `APP_NAME` in [src/lib/brand.ts](src/lib/brand.ts).
+Pourfect has NOT been through trademark/store clearance yet (see Open decisions).
 
 ## Product intent (IMPORTANT)
 
@@ -15,18 +20,27 @@ Vite + Vercel + Supabase web app going through its own auth/backend buildout. Br
 evaluated independently: native-first (Capacitor or similar likely, since the goal is an app store
 presence) rather than web-first.
 
-## Current state (as of 2026-07-07, revamp v1)
+## Current state (as of 2026-09-10, Pourfect design overhaul)
 
-The overhaul defined in [docs/UX-DIRECTION.md](docs/UX-DIRECTION.md) is implemented as a working web
-app (Capacitor wrapper not yet added). Vite + React 18 + TypeScript strict, zustand persisted to
-localStorage. The legacy prototype survives only as
+The IA and flows from [docs/UX-DIRECTION.md](docs/UX-DIRECTION.md) are unchanged, but the entire
+visual system was replaced by the approved "Pink stickers" direction delivered in
+[design_handoff_pourfect_overhaul/](design_handoff_pourfect_overhaul) (README = written spec,
+`Pourfect.dc.html` = the prototype with every measurement inline, `screenshots/` = per-screen
+reference renders). **That handoff is the source of truth for all visual work.** Vite + React 18 +
+TypeScript strict, zustand persisted to localStorage. The legacy prototype survives only as
 [legacy-prototype.html.bak](legacy-prototype.html.bak).
 
-Structure:
-- [src/styles/tokens.css](src/styles/tokens.css): all design tokens as CSS variables (`--bl-*`),
-  light + dark themes (`[data-theme="dark"]`), method accents (v60 sage / aeropress clay / coldbrew
-  slate), caramel reserved for journal moments, shared keyframes. Components use inline styles
-  referencing these vars only, no hardcoded hex.
+Design system (near-black ink, 2px rules, Archivo Black display type, sticker shapes, pill buttons):
+- [src/styles/tokens.css](src/styles/tokens.css): six palette sets as `--p-*` variables, selected by
+  `data-palette` (pink / lime / tangerine) x `data-theme` (light / dark) on the document element.
+  Token roles: bg, card, ink (text AND all 2px rules), muted, faint, accent, accent-ink, track, num,
+  nav-active. Also the sticker clip-paths and the blink/spin keyframes. Components use inline styles
+  referencing these vars only; the ONLY allowed colour literals in src/ are the mini-bar shadow and
+  the sheet scrim.
+- **Methods are coded by SHAPE, never colour**: V60 = accent burst, AeroPress = ink circle, cold brew
+  = accent diamond. There are no per-method accent colours any more.
+- Type: Archivo Black for display (`DISPLAY` / `--p-font-display`), Archivo for body, both self-hosted
+  via @fontsource. Tabular numerals wherever numbers change in place.
 - [src/lib/types.ts](src/lib/types.ts): all shared types (`Recipe`, `SessionPlan`, `ActiveSession`,
   `JournalEntry`, `Tweak`, `TasteTag`, ...).
 - [src/lib/store.ts](src/lib/store.ts): zustand store (persist key `brewlab-store`): onboarding
@@ -36,35 +50,50 @@ Structure:
   timestamps (`stepEndsAt`); pause captures remaining ms; UI re-renders via
   [src/lib/useNow.ts](src/lib/useNow.ts). Never setInterval-accumulated state.
 - [src/lib/coaching.ts](src/lib/coaching.ts): taste-chip -> conservative adjustment rules table.
+  Taste is **multi-select**: `coachFor(tastes[], method)` returns one suggestion line per tag and a
+  combined `chipLabel`; `toggleTaste()` keeps "just right" exclusive with the problem tags.
+- [src/lib/brand.ts](src/lib/brand.ts): `APP_NAME`, `APP_TAGLINE`, `APP_STRAPLINE`. Never hardcode
+  the product name in a screen.
 - [src/lib/recipes.ts](src/lib/recipes.ts) + [src/lib/recipes-extra.ts](src/lib/recipes-extra.ts):
   12 bundled recipes with per-step cumulative `waterTargetG` and optional `why` tips.
 - [src/lib/haptics.ts](src/lib/haptics.ts): haptics abstraction (web Vibration API now,
   @capacitor/haptics later).
-- [src/ui/](src/ui): `primitives.tsx` (Card, Chip, PrimaryButton, Sheet, Segmented, Mono, ...) and
-  `icons.tsx` (Phosphor light-weight re-exports + custom 24px method glyphs).
-- [src/BrewLab.tsx](src/BrewLab.tsx): shell. 3 tabs (Brew / Journal / Library), brew session as a
-  full-screen modal overlay (`SessionOverlay`), `NowBrewingBar` mini-bar when minimized, first-run
-  gate to `ThePour`, theme attribute management.
+- [src/ui/](src/ui): `primitives.tsx` (Label, MicroLabel, Meta, PageTitle, PrimaryPill, OutlinePill,
+  Chip, RoundBtn, SpecGrid, TweakPill, Toggle, Stepper, PillInput, Sheet, Row, `DISPLAY`) and
+  `icons.tsx` (Burst / Diamond / Dot / `MethodSticker` / `LogoMark` / `RatingBurst`, plus Phosphor
+  **bold** re-exports; the shell sets `IconContext` weight to bold).
+  Pressed-state helper classes live in [src/index.css](src/index.css): `p-press`, `p-outline`, `p-row`.
+- [src/BrewLab.tsx](src/BrewLab.tsx): shell. 3 tabs (Brew / Journal / Library) in a full-width ink nav
+  bar, brew session as a full-screen modal overlay (`SessionOverlay`), `NowBrewingBar` mini-bar when
+  minimized, first-run gate to `ThePour`, and palette/theme attribute resolution ("system" resolves
+  against `prefers-color-scheme` live).
 - Screens in `src/screens/`: `brew/` (BrewTab with Brew Again hero + pending-tweak chip,
   RecipeDetail, DialInSheet, QuickBrewSheet), `session/` (Get Ready pre-roll, running session with
-  pour targets + ring + scrubber, Brew Complete with rating/taste chips/coaching card),
-  `journal/` (auto-collected log, editable EntryDetail, ManualLogSheet), `library/` (favorites with
-  1-tap brew, v1.5/v2 placeholders, SettingsSheet with theme/haptics/export), `onboarding/`
-  (ThePour, CSS/SVG animated first run).
+  104px pour target + 12-wedge blinking ring + scrubber, Brew Complete with rating bursts, taste
+  chips and coaching card), `journal/` (auto-collected log, editable EntryDetail, ManualLogSheet),
+  `library/` (favorites with 1-tap brew, v1.5/v2 placeholders, SettingsSheet, and the **Appearance**
+  screen: palette cards each previewing their own palette, plus mode pills and a live hero preview),
+  `onboarding/` (ThePour, CSS/SVG animated first run).
 
-Verified end to end in the browser: 1-tap brew-again loop, wall-clock timer with pause/scrub/
-auto-advance, minimize/mini-bar, taste-chip coaching persisting to the next brew, journal auto-log,
-dark mode, reload persistence. No backend yet (Supabase lands in v1.5). `npm run dev` /
-`npm run build` / `npm run cap:sync`.
+Verified screen by screen against `design_handoff_pourfect_overhaul/screenshots/` at 402px in the
+browser: all 14 screens, all three palettes, light and dark, plus the 1-tap brew-again loop,
+wall-clock timer with pause/scrub/auto-advance, minimize/mini-bar, multi-select taste coaching
+persisting to the next brew, journal auto-log, and reload persistence. No console errors. No backend
+yet (Supabase lands in v1.5). `npm run dev` / `npm run build` / `npm run cap:sync`.
 
 Capacitor integration (JS side) is done: [capacitor.config.ts](capacitor.config.ts) (appId
 `com.alxnhfr.brewlab`, changeable until first store submission), haptics via @capacitor/haptics
 with web Vibration fallback, [src/lib/native.ts](src/lib/native.ts) pre-schedules local
 notifications at every remaining step boundary and completion (the load-bearing background-timer
-architecture) and holds keep-awake during sessions; all no-ops on web. Fonts are bundled locally
-via @fontsource (offline requirement); the Google Fonts link in index.html remains ONLY for the
-static GitHub Pages placeholder. `npx cap add ios` / `npx cap add android` are NOT run yet: this
-machine lacks Xcode (CLT only), CocoaPods, and Android Studio. Install those, then add platforms.
+architecture) and holds keep-awake during sessions; all no-ops on web. Fonts (Archivo, Archivo Black)
+are bundled locally via @fontsource, so there is no Google Fonts link anywhere; index.html carries a
+self-contained inline-styled Pourfect splash that doubles as the GitHub Pages placeholder (its hex
+values are deliberate, the token stylesheet ships inside the bundle). Brand assets live in
+`public/brand/` (all palettes, light and dark tiles, PNG exports at every iOS size); v1 ships the
+Pink light icon only, wired as `favicon.svg` and `apple-touch-icon.png`. Alternate icons per palette
+(`UIApplication.setAlternateIconName`) were deliberately deferred.
+`npx cap add ios` / `npx cap add android` are NOT run yet: this machine lacks Xcode (CLT only),
+CocoaPods, and Android Studio. Install those, then add platforms.
 
 ## What NOT to do
 
@@ -98,8 +127,8 @@ machine lacks Xcode (CLT only), CocoaPods, and Android Studio. Install those, th
   there are senior trademark/business users in the US, UK, and EU (LaMotte, Brewlab Ltd UK, Munich
   and Dublin businesses); USPTO treats "BREW LAB" as descriptive. Verdict: keep BrewLab as internal
   repo codename only, never as the public brand. Candidate replacements pending clearance
-  (iTunes Search API, Play search, USPTO, EUIPO/TMview, .app domain): Pourfect, Steepwise,
-  Bloomly, Kurve. Once a name is picked: register the .app domain, set the matching bundle id in
+  (iTunes Search API, Play search, USPTO, EUIPO/TMview, .app domain): **Pourfect** (currently used in
+  the UI as a working title, cleared NOTHING yet), Steepwise, Bloomly, Kurve. Once a name is picked: register the .app domain, set the matching bundle id in
   capacitor.config.ts (currently placeholder com.alxnhfr.brewlab, changeable until first store
   submission), and consider an EUIPO class 9/42 filing before launch (developer is EU-based).
 - **"Dialed" was cleared and REJECTED (2026-07-15).** Alex's preferred candidate failed clearance:

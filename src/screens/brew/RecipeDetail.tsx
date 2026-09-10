@@ -1,260 +1,207 @@
-import { useState, type CSSProperties, type ReactNode } from "react"
-import type { DoseMemory, Recipe, Tweak } from "../../lib/types"
+import { useState } from "react"
+import type { Recipe } from "../../lib/types"
 import { useBrewLab } from "../../lib/store"
-import { makePlan } from "../../lib/session"
 import { fmt } from "../../lib/format"
 import { haptics } from "../../lib/haptics"
-import { Card, GhostButton, Mono, PrimaryButton, Row, SectionLabel } from "../../ui/primitives"
-import { CaretDown, CaretLeft, Heart, SlidersHorizontal } from "../../ui/icons"
+import {
+  DISPLAY,
+  Label,
+  MicroLabel,
+  OutlinePill,
+  PrimaryPill,
+  RoundBtn,
+  SpecGrid,
+  TweakPill,
+} from "../../ui/primitives"
+import { ArrowCounterClockwise, CaretDown, CaretLeft, Dot, Heart, MethodSticker } from "../../ui/icons"
 import { DialInSheet } from "./DialInSheet"
-import { GlyphSquare, TweakChip, methodColors, methodShort, ratioLabel, tempLabel } from "./shared"
+import { methodCode, ratioLabel, tempLabel, tweakLabel, useRecipePlan } from "./shared"
 
-function IconButton({
-  onClick,
-  children,
-  color,
-  label,
-}: {
-  onClick: () => void
-  children: ReactNode
-  color?: string
-  label: string
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      style={{
-        width: 44,
-        height: 44,
-        borderRadius: "var(--bl-radius-sm)",
-        border: "1px solid var(--bl-line)",
-        background: "var(--bl-card)",
-        color: color ?? "var(--bl-ink)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        flexShrink: 0,
-      }}
-    >
-      {children}
-    </button>
-  )
+/** Numbers in the spec grid never reflow when a dial-in changes them. */
+function Num({ children }: { children: string }) {
+  return <span style={{ fontVariantNumeric: "tabular-nums" }}>{children}</span>
 }
-
-function Param({ value, unit, label }: { value: string; unit?: string; label: string }) {
-  return (
-    <div style={{ textAlign: "center", flex: 1 }}>
-      <div>
-        <Mono style={{ fontSize: 18, color: "var(--bl-ink)" }}>{value}</Mono>
-        {unit && <Mono style={{ fontSize: 12, color: "var(--bl-faint)" }}>{unit}</Mono>}
-      </div>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "var(--bl-faint)",
-          marginTop: 3,
-        }}
-      >
-        {label}
-      </div>
-    </div>
-  )
-}
-
-const mutedNote: CSSProperties = { fontSize: 12, color: "var(--bl-muted)", lineHeight: 1.5 }
 
 export function RecipeDetail({ recipe, onBack }: { recipe: Recipe; onBack: () => void }) {
   const favorites = useBrewLab((s) => s.favorites)
   const toggleFavorite = useBrewLab((s) => s.toggleFavorite)
-  const doseMemory = useBrewLab((s) => s.doseMemory)
-  const pendingTweaks = useBrewLab((s) => s.pendingTweaks)
   const startSession = useBrewLab((s) => s.startSession)
+  const { plan, tweak } = useRecipePlan(recipe)
 
   const [dialOpen, setDialOpen] = useState(false)
   const [openWhys, setOpenWhys] = useState<Record<number, boolean>>({})
 
-  const { accent } = methodColors(recipe.method)
   const fav = favorites.includes(recipe.id)
-  const memory: DoseMemory | undefined = doseMemory[recipe.id]
-  const tweak: Tweak | undefined = pendingTweaks[recipe.id]
-
-  const doseG = memory?.doseG ?? recipe.doseG
-  const waterG = memory?.waterG ?? recipe.waterG
-  const tempC = memory !== undefined ? memory.tempC : recipe.tempC
-  const remembered =
-    memory !== undefined &&
-    (memory.doseG !== recipe.doseG || memory.waterG !== recipe.waterG || memory.tempC !== recipe.tempC)
-
-  const start = () => {
-    startSession(makePlan(recipe, memory, tweak?.chipLabel))
-    haptics.medium()
-  }
 
   return (
-    <div style={{ padding: "24px 24px 120px", animation: "bl-fade-in .25s ease" }}>
-      <Row style={{ justifyContent: "space-between", marginBottom: 20 }}>
-        <IconButton onClick={onBack} label="Back">
-          <CaretLeft size={20} />
-        </IconButton>
-        <IconButton
+    <div style={{ paddingTop: 62, paddingBottom: 120 }}>
+      <div
+        style={{
+          padding: "10px 20px 14px",
+          borderBottom: "2px solid var(--p-ink)",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <RoundBtn size={40} onClick={onBack} label="Back">
+          <CaretLeft size={18} />
+        </RoundBtn>
+        <div
+          style={{
+            flex: 1,
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: ".16em",
+            textTransform: "uppercase",
+            color: "var(--p-muted)",
+          }}
+        >
+          {methodCode(recipe.method)} · {recipe.author} · {recipe.roast} roast
+        </div>
+        <RoundBtn
+          size={40}
           onClick={() => {
             toggleFavorite(recipe.id)
             haptics.selection()
           }}
-          color={fav ? "var(--bl-caramel)" : "var(--bl-faint)"}
           label={fav ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart size={20} weight={fav ? "fill" : "light"} />
-        </IconButton>
-      </Row>
+          <Heart size={18} weight={fav ? "fill" : "bold"} color={fav ? "var(--p-accent)" : undefined} />
+        </RoundBtn>
+      </div>
 
-      <Row style={{ alignItems: "flex-start", gap: 14 }}>
-        <GlyphSquare method={recipe.method} size={52} />
-        <div style={{ minWidth: 0 }}>
+      <div style={{ padding: "22px 20px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <MethodSticker method={recipe.method} size={32} />
           <div
             style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.12em",
+              fontFamily: DISPLAY,
+              fontSize: 36,
+              lineHeight: 0.95,
+              letterSpacing: "-0.03em",
               textTransform: "uppercase",
-              color: accent,
-              marginBottom: 3,
             }}
           >
-            {methodShort(recipe.method)}
-          </div>
-          <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--bl-font-display)", lineHeight: 1.15 }}>
             {recipe.name}
           </div>
-          <div style={{ fontSize: 12, color: "var(--bl-faint)", marginTop: 4 }}>
-            {recipe.author}, {recipe.roast} roast
-          </div>
         </div>
-      </Row>
 
-      <div style={{ ...mutedNote, fontSize: 14, marginTop: 12 }}>{recipe.whyLine}</div>
-
-      <Card style={{ marginTop: 18, padding: "16px 12px", display: "flex", alignItems: "center" }}>
-        <Param value={String(doseG)} unit="g" label="Dose" />
-        <Param value={String(waterG)} unit="g" label="Water" />
-        <Param value={ratioLabel(doseG, waterG)} label="Ratio" />
-        <Param value={tempLabel(tempC)} label="Temp" />
-      </Card>
-
-      {remembered && (
-        <div style={{ ...mutedNote, marginTop: 10 }}>
-          Remembered from your dial-in. Recipe default:{" "}
-          <Mono>
-            {recipe.doseG}g : {recipe.waterG}g, {tempLabel(recipe.tempC)}
-          </Mono>
-          .
+        <div style={{ fontSize: 15, color: "var(--p-muted)", lineHeight: 1.45, marginTop: 14 }}>
+          {recipe.whyLine}
         </div>
-      )}
 
-      {tweak && <TweakChip tweak={tweak} style={{ marginTop: 12 }} />}
+        <SpecGrid
+          style={{ marginTop: 18 }}
+          cells={[
+            { value: <Num>{`${plan.doseG} G`}</Num>, caption: "Dose" },
+            { value: <Num>{`${plan.waterG} G`}</Num>, caption: "Water" },
+            { value: <Num>{ratioLabel(plan.doseG, plan.waterG)}</Num>, caption: "Ratio" },
+            { value: <Num>{tempLabel(plan.tempC)}</Num>, caption: "Temp" },
+          ]}
+        />
 
-      <SectionLabel style={{ marginTop: 28 }}>Steps</SectionLabel>
-      <Card style={{ padding: "4px 16px" }}>
-        {recipe.steps.map((step, i) => {
-          const whyOpen = openWhys[i] === true
-          return (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                gap: 12,
-                padding: "14px 0",
-                borderTop: i > 0 ? "1px solid var(--bl-line)" : "none",
-              }}
-            >
+        {tweak && (
+          <TweakPill style={{ marginTop: 14 }}>
+            <ArrowCounterClockwise size={14} />
+            {tweakLabel(tweak)}
+          </TweakPill>
+        )}
+
+        <Label style={{ marginTop: 28 }}>Steps</Label>
+
+        <div style={{ marginTop: 10, borderTop: "2px solid var(--p-ink)" }}>
+          {plan.steps.map((step, i) => {
+            const whyOpen = openWhys[i] === true
+            return (
               <div
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 999,
-                  background: methodColors(recipe.method).soft,
-                  color: accent,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  marginTop: 1,
-                }}
+                key={i}
+                style={{ display: "flex", gap: 14, padding: "14px 0", borderBottom: "2px solid var(--p-ink)" }}
               >
-                <Mono style={{ fontSize: 12 }}>{i + 1}</Mono>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Row style={{ justifyContent: "space-between", gap: 8 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{step.label}</span>
-                  <Mono style={{ fontSize: 13, color: "var(--bl-muted)", flexShrink: 0 }}>{fmt(step.seconds)}</Mono>
-                </Row>
-                <div style={{ fontSize: 13, color: "var(--bl-muted)", marginTop: 2, lineHeight: 1.4 }}>
-                  {step.detail}
+                <Dot size={32} color="var(--p-ink)">
+                  <span style={{ fontFamily: DISPLAY, fontSize: 13, color: "var(--p-bg)" }}>{i + 1}</span>
+                </Dot>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+                    <span style={{ fontFamily: DISPLAY, fontSize: 15, textTransform: "uppercase" }}>
+                      {step.label}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                      {fmt(step.seconds)}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--p-muted)", marginTop: 3, lineHeight: 1.4 }}>
+                    {step.detail}
+                  </div>
+                  {step.waterTargetG !== undefined && (
+                    <MicroLabel style={{ color: "var(--p-faint)", marginTop: 6 }}>
+                      to {step.waterTargetG} g
+                    </MicroLabel>
+                  )}
+                  {step.why && (
+                    <>
+                      <button
+                        onClick={() => setOpenWhys((w) => ({ ...w, [i]: !whyOpen }))}
+                        aria-expanded={whyOpen}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                          marginTop: 6,
+                          padding: "6px 0",
+                          background: "none",
+                          border: "none",
+                          color: "var(--p-faint)",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          letterSpacing: ".1em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Why
+                        <CaretDown
+                          size={12}
+                          style={{ transform: whyOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}
+                        />
+                      </button>
+                      {whyOpen && (
+                        <div style={{ fontSize: 13, color: "var(--p-muted)", lineHeight: 1.45, marginTop: 2 }}>
+                          {step.why}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
-                {step.waterTargetG !== undefined && (
-                  <Mono style={{ fontSize: 12, color: "var(--bl-faint)", display: "block", marginTop: 3 }}>
-                    to {step.waterTargetG}g
-                  </Mono>
-                )}
-                {step.why && (
-                  <>
-                    <button
-                      onClick={() => setOpenWhys((w) => ({ ...w, [i]: !whyOpen }))}
-                      style={{
-                        minHeight: 44,
-                        margin: "-10px 0",
-                        padding: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 4,
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--bl-faint)",
-                        fontSize: 12,
-                        fontWeight: 500,
-                      }}
-                    >
-                      why
-                      <CaretDown
-                        size={12}
-                        style={{ transform: whyOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}
-                      />
-                    </button>
-                    {whyOpen && (
-                      <div style={{ ...mutedNote, marginTop: 8, animation: "bl-fade-in .2s ease" }}>{step.why}</div>
-                    )}
-                  </>
-                )}
               </div>
-            </div>
-          )
-        })}
-      </Card>
+            )
+          })}
+        </div>
 
-      <GhostButton onClick={() => setDialOpen(true)} style={{ width: "100%", marginTop: 24 }}>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-          <SlidersHorizontal size={18} />
-          Dial in
-        </span>
-      </GhostButton>
-
-      <PrimaryButton color={accent} onClick={start} style={{ minHeight: 64, marginTop: 12 }}>
-        Start brew
-      </PrimaryButton>
+        <div style={{ display: "flex", gap: 8, marginTop: 22 }}>
+          <OutlinePill minHeight={60} onClick={() => setDialOpen(true)} style={{ flex: "0 0 auto" }}>
+            Dial in
+          </OutlinePill>
+          <PrimaryPill
+            minHeight={60}
+            fontSize={18}
+            onClick={() => {
+              startSession(plan)
+              haptics.medium()
+            }}
+            style={{ flex: 1, width: "auto" }}
+          >
+            START BREW →
+          </PrimaryPill>
+        </div>
+      </div>
 
       <DialInSheet
         recipe={recipe}
         open={dialOpen}
         onClose={() => setDialOpen(false)}
-        onStart={(plan) => {
+        onStart={(nextPlan) => {
           setDialOpen(false)
-          startSession(plan)
+          startSession(nextPlan)
           haptics.medium()
         }}
       />

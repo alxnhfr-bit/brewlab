@@ -1,84 +1,48 @@
+/* Pourfect palette tokens. `data-palette` and `data-theme` are set on the
+   document element by the shell; "system" is resolved to light/dark before
+   the attribute is written, so only light/dark ever appear here. */
+
+[data-palette="pink"][data-theme="light"]{--p-bg:#FFF4F8;--p-card:#FFFFFF;--p-ink:#111111;--p-muted:#4A4548;--p-faint:#8F878B;--p-accent:#FF3E9A;--p-accent-ink:#111111;--p-track:#F3DCE6;--p-num:#111111;--p-nav-active:#FF3E9A}
+[data-palette="pink"][data-theme="dark"]{--p-bg:#111111;--p-card:#1C1819;--p-ink:#FFF4F8;--p-muted:#C9BFC4;--p-faint:#6E6669;--p-accent:#FF3E9A;--p-accent-ink:#111111;--p-track:#2A2426;--p-num:#FF3E9A;--p-nav-active:#FF3E9A}
+[data-palette="lime"][data-theme="light"]{--p-bg:#D9F26B;--p-card:#D9F26B;--p-ink:#0F3B2E;--p-muted:#2E5A4B;--p-faint:#5E8474;--p-accent:#0F3B2E;--p-accent-ink:#D9F26B;--p-track:#BFD85C;--p-num:#0F3B2E;--p-nav-active:#D9F26B}
+[data-palette="lime"][data-theme="dark"]{--p-bg:#0F3B2E;--p-card:#0F3B2E;--p-ink:#D9F26B;--p-muted:#A9C46A;--p-faint:#5E8474;--p-accent:#D9F26B;--p-accent-ink:#0F3B2E;--p-track:#1E5243;--p-num:#D9F26B;--p-nav-active:#0F3B2E}
+[data-palette="tangerine"][data-theme="light"]{--p-bg:#F7EFE3;--p-card:#FFFFFF;--p-ink:#2A1633;--p-muted:#5A4A66;--p-faint:#9A8CA3;--p-accent:#FF6B1A;--p-accent-ink:#2A1633;--p-track:#E6DCCF;--p-num:#2A1633;--p-nav-active:#FF6B1A}
+[data-palette="tangerine"][data-theme="dark"]{--p-bg:#2A1633;--p-card:#35203F;--p-ink:#F7EFE3;--p-muted:#C9BBD3;--p-faint:#7A6C86;--p-accent:#FF6B1A;--p-accent-ink:#2A1633;--p-track:#3E2A4A;--p-num:#FF6B1A;--p-nav-active:#FF6B1A}
+
+/* Type */
 :root {
-  --bl-bg: #F5F5F3;
-  --bl-bg-translucent: rgba(245, 245, 243, 0.88);
-  --bl-card: #FFFFFF;
-  --bl-line: #E0E0DD;
-  --bl-ink: #26231F;
-  --bl-muted: #6B6B65;
-  --bl-faint: #A5A5A0;
-  --bl-brand: #4A6B5D;
-  --bl-brand-ink: #FFFFFF;
-  --bl-brand-soft: #E8EEEA;
-  --bl-v60: #5B7F6E;
-  --bl-v60-soft: #DCE6DF;
-  --bl-aero: #B06A4A;
-  --bl-aero-soft: #EFDFD5;
-  --bl-cold: #5E7A8C;
-  --bl-cold-soft: #DDE6EC;
-  --bl-amber: #C99A5B;
-  --bl-caramel: #9C6B43;
-  --bl-caramel-soft: #F0E4D6;
-  --bl-danger: #A3402E;
-  --bl-scrim: rgba(38, 35, 31, 0.42);
-
-  --bl-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --bl-font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
-  --bl-font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  --bl-radius-sm: 10px;
-  --bl-radius: 14px;
-  --bl-radius-lg: 20px;
-
-  --bl-shadow-card: 0 1px 6px rgba(38, 35, 31, 0.05);
-  --bl-shadow-float: 0 8px 32px rgba(38, 35, 31, 0.14);
+  --p-font-display: "Archivo Black", -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-body: "Archivo", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-[data-theme="dark"] {
-  --bl-bg: #1C1917;
-  --bl-bg-translucent: rgba(28, 25, 23, 0.88);
-  --bl-card: #2A2622;
-  --bl-line: #3B362F;
-  --bl-ink: #F0EDE8;
-  --bl-muted: #A8A29A;
-  --bl-faint: #6E6961;
-  --bl-brand: #6E9080;
-  --bl-brand-ink: #16201B;
-  --bl-brand-soft: #2C3630;
-  --bl-v60: #7FA391;
-  --bl-v60-soft: #2C3A33;
-  --bl-aero: #C98F73;
-  --bl-aero-soft: #3C2E26;
-  --bl-cold: #86A0B2;
-  --bl-cold-soft: #2A343C;
-  --bl-amber: #D3A96F;
-  --bl-caramel: #BE8D62;
-  --bl-caramel-soft: #382C21;
-  --bl-danger: #C96A57;
-  --bl-scrim: rgba(0, 0, 0, 0.55);
-
-  --bl-shadow-card: 0 1px 6px rgba(0, 0, 0, 0.25);
-  --bl-shadow-float: 0 8px 32px rgba(0, 0, 0, 0.45);
+/* Sticker shapes. Burst = 12 points, inner radius 72% of outer. */
+:root {
+  --p-burst: polygon(100.0% 50.0%,84.8% 59.3%,93.3% 75.0%,75.5% 74.5%,75.0% 93.3%,59.3% 84.8%,50.0% 100.0%,40.7% 84.8%,25.0% 93.3%,24.5% 74.5%,6.7% 75.0%,15.2% 59.3%,0.0% 50.0%,15.2% 40.7%,6.7% 25.0%,24.5% 25.5%,25.0% 6.7%,40.7% 15.2%,50.0% 0.0%,59.3% 15.2%,75.0% 6.7%,75.5% 25.5%,93.3% 25.0%,84.8% 40.7%);
+  --p-diamond: polygon(50% 0,100% 50%,50% 100%,0 50%);
 }
 
-@keyframes bl-sheet-up {
-  from { transform: translateY(24px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes blink { 50% { opacity: 0 } }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+@keyframes p-sheet-up {
+  from { transform: translateY(100%) }
+  to { transform: translateY(0) }
 }
 
-@keyframes bl-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes p-scrim-in {
+  from { opacity: 0 }
+  to { opacity: 1 }
 }
 
-@keyframes bl-pop {
-  0% { transform: scale(0.96); opacity: 0; }
-  60% { transform: scale(1.015); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes p-card-in {
+  from { transform: scale(.96); opacity: 0 }
+  to { transform: scale(1); opacity: 1 }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
   }
 }

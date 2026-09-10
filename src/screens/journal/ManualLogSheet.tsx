@@ -1,23 +1,80 @@
-import { useState, type CSSProperties } from "react"
+import { useState, type ReactNode } from "react"
 import { useBrewLab } from "../../lib/store"
 import type { BrewMethodId, TasteTag } from "../../lib/types"
 import { METHODS, RECIPES } from "../../lib/recipes"
 import { haptics } from "../../lib/haptics"
-import { Chip, PrimaryButton, SectionLabel, Segmented, Sheet } from "../../ui/primitives"
-import { BeanRating, TasteChips } from "./shared"
+import { Chip, Label, PillInput, PrimaryPill, Sheet } from "../../ui/primitives"
+import { RatingRow, TasteChipRow, methodShort } from "./shared"
 
-const inputStyle: CSSProperties = {
-  width: "100%",
-  boxSizing: "border-box",
-  minHeight: 48,
-  padding: "12px 14px",
-  background: "var(--bl-card)",
-  border: "1px solid var(--bl-line)",
-  borderRadius: "var(--bl-radius)",
-  color: "var(--bl-ink)",
-  fontSize: 15,
-  fontFamily: "inherit",
-  outline: "none",
+/** Three equal method pills. Selected = ink fill / bg text. */
+function MethodSegment({
+  value,
+  onChange,
+}: {
+  value: BrewMethodId
+  onChange: (method: BrewMethodId) => void
+}) {
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      {METHODS.map((m) => {
+        const selected = m.id === value
+        return (
+          <button
+            key={m.id}
+            className="p-press"
+            onClick={() => onChange(m.id)}
+            style={{
+              flex: 1,
+              minHeight: 44,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px solid var(--p-ink)",
+              borderRadius: 999,
+              background: selected ? "var(--p-ink)" : "transparent",
+              color: selected ? "var(--p-bg)" : "var(--p-ink)",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: ".1em",
+              textTransform: "uppercase",
+            }}
+          >
+            {methodShort(m.id)}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Validation message: accent pill, accent-ink text, under the bad input. */
+function FieldError({ children }: { children: ReactNode }) {
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        marginTop: 8,
+        padding: "6px 14px",
+        borderRadius: 999,
+        background: "var(--p-accent)",
+        color: "var(--p-accent-ink)",
+        fontSize: 12,
+        fontWeight: 700,
+        letterSpacing: ".08em",
+        textTransform: "uppercase",
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function amount(raw: string): number | null {
+  const trimmed = raw.trim()
+  if (trimmed === "") return null
+  const n = Number(trimmed)
+  return Number.isFinite(n) && n > 0 ? n : null
 }
 
 export function ManualLogSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -29,15 +86,21 @@ export function ManualLogSheet({ open, onClose }: { open: boolean; onClose: () =
   const [dose, setDose] = useState("")
   const [water, setWater] = useState("")
   const [rating, setRating] = useState<number | undefined>(undefined)
-  const [taste, setTaste] = useState<TasteTag | undefined>(undefined)
+  const [tastes, setTastes] = useState<TasteTag[]>([])
+  const [showErrors, setShowErrors] = useState(false)
 
   const methodRecipes = RECIPES.filter((r) => r.method === method)
+  const doseG = amount(dose)
+  const waterG = amount(water)
+  const nameInvalid = name.trim() === ""
+  const doseInvalid = doseG === null
+  const waterInvalid = waterG === null
 
-  function changeMethod(id: string) {
-    const m = METHODS.find((x) => x.id === id)
-    if (!m || m.id === method) return
-    setMethod(m.id)
+  function changeMethod(id: BrewMethodId) {
+    if (id === method) return
+    setMethod(id)
     setRecipeId(null)
+    haptics.selection()
   }
 
   function pickRecipe(id: string) {
@@ -59,24 +122,27 @@ export function ManualLogSheet({ open, onClose }: { open: boolean; onClose: () =
     setDose("")
     setWater("")
     setRating(undefined)
-    setTaste(undefined)
+    setTastes([])
+    setShowErrors(false)
   }
 
   function save() {
-    const doseG = parseFloat(dose)
-    const waterG = parseFloat(water)
+    if (nameInvalid || doseG === null || waterG === null) {
+      setShowErrors(true)
+      return
+    }
     logManual({
       at: Date.now(),
       recipeId,
-      recipeName: name.trim() === "" ? "Manual brew" : name.trim(),
+      recipeName: name.trim(),
       method,
-      doseG: Number.isFinite(doseG) ? doseG : 0,
-      waterG: Number.isFinite(waterG) ? waterG : 0,
+      doseG,
+      waterG,
       tempC: null,
       durationSec: 0,
       completed: true,
       rating,
-      taste,
+      tastes: tastes.length > 0 ? tastes : undefined,
     })
     haptics.light()
     reset()
@@ -85,23 +151,13 @@ export function ManualLogSheet({ open, onClose }: { open: boolean; onClose: () =
 
   return (
     <Sheet open={open} onClose={onClose} title="Log a brew">
-      <SectionLabel style={{ marginBottom: 8 }}>Method</SectionLabel>
-      <Segmented
-        options={METHODS.map((m) => ({ id: m.id, label: m.short }))}
-        value={method}
-        onChange={changeMethod}
-      />
+      <Label style={{ marginTop: 18 }}>Method</Label>
+      <div style={{ marginTop: 10 }}>
+        <MethodSegment value={method} onChange={changeMethod} />
+      </div>
 
-      <SectionLabel style={{ marginTop: 20, marginBottom: 8 }}>Recipe (optional)</SectionLabel>
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          overflowX: "auto",
-          margin: "0 -24px",
-          padding: "0 24px 4px",
-        }}
-      >
+      <Label style={{ marginTop: 20 }}>Recipe (optional)</Label>
+      <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
         {methodRecipes.map((r) => (
           <Chip key={r.id} selected={recipeId === r.id} onClick={() => pickRecipe(r.id)}>
             {r.name}
@@ -109,41 +165,61 @@ export function ManualLogSheet({ open, onClose }: { open: boolean; onClose: () =
         ))}
       </div>
 
-      <SectionLabel style={{ marginTop: 20, marginBottom: 8 }}>Name</SectionLabel>
-      <input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle} />
+      <Label style={{ marginTop: 20 }}>Name</Label>
+      <div style={{ marginTop: 10 }}>
+        <PillInput value={name} onChange={setName} invalid={showErrors && nameInvalid} />
+        {showErrors && nameInvalid && <FieldError>Name is required</FieldError>}
+      </div>
 
-      <div style={{ display: "flex", gap: 12, marginTop: 20 }}>
-        <div style={{ flex: 1 }}>
-          <SectionLabel style={{ marginBottom: 8 }}>Dose (g)</SectionLabel>
-          <input
-            value={dose}
-            onChange={(e) => setDose(e.target.value)}
-            inputMode="decimal"
-            placeholder="15"
-            style={{ ...inputStyle, fontFamily: "var(--bl-font-mono)" }}
-          />
+      <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Label>Dose (g)</Label>
+          <div style={{ marginTop: 10 }}>
+            <PillInput
+              value={dose}
+              onChange={setDose}
+              placeholder="15"
+              inputMode="decimal"
+              invalid={showErrors && doseInvalid}
+              style={{ fontVariantNumeric: "tabular-nums" }}
+            />
+            {showErrors && doseInvalid && <FieldError>Enter a number</FieldError>}
+          </div>
         </div>
-        <div style={{ flex: 1 }}>
-          <SectionLabel style={{ marginBottom: 8 }}>Water (g)</SectionLabel>
-          <input
-            value={water}
-            onChange={(e) => setWater(e.target.value)}
-            inputMode="decimal"
-            placeholder="250"
-            style={{ ...inputStyle, fontFamily: "var(--bl-font-mono)" }}
-          />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Label>Water (g)</Label>
+          <div style={{ marginTop: 10 }}>
+            <PillInput
+              value={water}
+              onChange={setWater}
+              placeholder="250"
+              inputMode="decimal"
+              invalid={showErrors && waterInvalid}
+              style={{ fontVariantNumeric: "tabular-nums" }}
+            />
+            {showErrors && waterInvalid && <FieldError>Enter a number</FieldError>}
+          </div>
         </div>
       </div>
 
-      <SectionLabel style={{ marginTop: 20, marginBottom: 4 }}>Rating (optional)</SectionLabel>
-      <BeanRating value={rating} onChange={setRating} />
+      <Label style={{ marginTop: 20 }}>Rating (optional)</Label>
+      <div style={{ marginTop: 10 }}>
+        <RatingRow value={rating} size={26} onChange={setRating} />
+      </div>
 
-      <SectionLabel style={{ marginTop: 20, marginBottom: 8 }}>Taste (optional)</SectionLabel>
-      <TasteChips value={taste} onChange={setTaste} />
+      <Label style={{ marginTop: 20 }}>Taste (optional)</Label>
+      <div style={{ marginTop: 10 }}>
+        <TasteChipRow value={tastes} onChange={setTastes} />
+      </div>
 
-      <PrimaryButton onClick={save} style={{ marginTop: 28 }}>
+      <PrimaryPill
+        minHeight={60}
+        fontSize={18}
+        style={{ marginTop: 24, textTransform: "uppercase" }}
+        onClick={save}
+      >
         Save brew
-      </PrimaryButton>
+      </PrimaryPill>
     </Sheet>
   )
 }

@@ -30,10 +30,11 @@ export interface Recipe {
 export type TasteTag = "bitter" | "sour" | "weak" | "strong" | "just-right"
 
 export interface Tweak {
-  tasteTag: TasteTag
-  /** Human-readable suggestion, reasoning included. */
-  suggestion: string
-  /** Short chip label, e.g. "grind coarser". */
+  /** Every taste tag the coaching came from, in selection order. */
+  tasteTags: TasteTag[]
+  /** One suggestion line per tag, reasoning included. */
+  suggestions: string[]
+  /** Short chip labels joined for display, e.g. "grind coarser · +1g coffee". */
   chipLabel: string
   createdAt: number
 }
@@ -57,7 +58,8 @@ export interface JournalEntry {
   completed: boolean
   manual: boolean
   rating?: number
-  taste?: TasteTag
+  /** Taste tags for this brew. Multi-select; "just-right" is exclusive. */
+  tastes?: TasteTag[]
   tweakApplied?: string
   notes?: string
 }
@@ -101,8 +103,11 @@ export interface ActiveSession {
 
 export type ThemeSetting = "system" | "light" | "dark"
 
+export type PaletteId = "pink" | "lime" | "tangerine"
+
 export interface Settings {
   theme: ThemeSetting
+  palette: PaletteId
   haptics: boolean
   sound: boolean
 }

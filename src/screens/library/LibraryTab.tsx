@@ -1,32 +1,27 @@
 import { useState } from "react"
-import type { BrewMethodId, Recipe } from "../../lib/types"
+import type { Recipe } from "../../lib/types"
 import { useBrewLab } from "../../lib/store"
 import { RECIPES } from "../../lib/recipes"
 import { makePlan } from "../../lib/session"
 import { haptics } from "../../lib/haptics"
-import { SectionLabel, Card, Mono, Row } from "../../ui/primitives"
-import { GearSix, Heart, PencilSimple, MethodGlyph, BeanGlyph } from "../../ui/icons"
+import { DISPLAY, Label, PageTitle, RoundBtn } from "../../ui/primitives"
+import { GearSix, Heart, MethodSticker } from "../../ui/icons"
+import { Appearance } from "./Appearance"
 import { SettingsSheet } from "./SettingsSheet"
 
-function accentFor(method: BrewMethodId): { main: string; soft: string } {
-  if (method === "v60") return { main: "var(--bl-v60)", soft: "var(--bl-v60-soft)" }
-  if (method === "aeropress") return { main: "var(--bl-aero)", soft: "var(--bl-aero-soft)" }
-  return { main: "var(--bl-cold)", soft: "var(--bl-cold-soft)" }
-}
-
-/** Small caramel release pill, e.g. "v1.5" or "v2". */
-function VersionPill({ label }: { label: string }) {
+/** Ink-filled release badge, e.g. "V1.5". */
+function VersionBadge({ label }: { label: string }) {
   return (
     <span
       style={{
-        fontFamily: "var(--bl-font-mono)",
-        fontSize: 10.5,
-        fontWeight: 500,
-        letterSpacing: "0.04em",
-        padding: "3px 9px",
+        flexShrink: 0,
+        padding: "6px 10px",
         borderRadius: 999,
-        background: "var(--bl-caramel-soft)",
-        color: "var(--bl-caramel)",
+        background: "var(--p-ink)",
+        color: "var(--p-bg)",
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: ".12em",
         whiteSpace: "nowrap",
       }}
     >
@@ -35,51 +30,65 @@ function VersionPill({ label }: { label: string }) {
   )
 }
 
-function FavoriteRow({ recipe, isLast }: { recipe: Recipe; isLast: boolean }) {
-  const doseMemory = useBrewLab((s) => s.doseMemory)
-  const pendingTweaks = useBrewLab((s) => s.pendingTweaks)
-  const toggleFavorite = useBrewLab((s) => s.toggleFavorite)
-  const startSession = useBrewLab((s) => s.startSession)
-  const accent = accentFor(recipe.method)
-  const memory = doseMemory[recipe.id]
-  const doseG = memory?.doseG ?? recipe.doseG
-  const waterG = memory?.waterG ?? recipe.waterG
-
-  const brew = () => {
-    const plan = makePlan(recipe, memory, pendingTweaks[recipe.id]?.chipLabel)
-    startSession(plan)
-    haptics.medium()
-  }
-
+/** Dashed placeholder card for a shelf that lands in a later release. */
+function ComingCard({ copy, version }: { copy: string; version: string }) {
   return (
-    <Row
+    <div
       style={{
-        padding: "12px 14px",
-        borderBottom: isLast ? "none" : "1px solid var(--bl-line)",
+        marginTop: 10,
+        border: "2px dashed var(--p-ink)",
+        borderRadius: 22,
+        padding: "16px 18px",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
       }}
     >
       <div
         style={{
-          width: 40,
-          height: 40,
-          flexShrink: 0,
-          borderRadius: "var(--bl-radius-sm)",
-          background: accent.soft,
-          color: accent.main,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          flex: 1,
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: ".08em",
+          textTransform: "uppercase",
+          color: "var(--p-muted)",
         }}
       >
-        <MethodGlyph method={recipe.method} size={22} />
+        {copy}
       </div>
+      <VersionBadge label={version} />
+    </div>
+  )
+}
+
+function FavoriteRow({ recipe }: { recipe: Recipe }) {
+  const doseMemory = useBrewLab((s) => s.doseMemory)
+  const pendingTweaks = useBrewLab((s) => s.pendingTweaks)
+  const toggleFavorite = useBrewLab((s) => s.toggleFavorite)
+  const startSession = useBrewLab((s) => s.startSession)
+
+  const memory = doseMemory[recipe.id]
+  const doseG = memory?.doseG ?? recipe.doseG
+  const waterG = memory?.waterG ?? recipe.waterG
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "12px 0",
+        borderBottom: "2px solid var(--p-ink)",
+      }}
+    >
+      <MethodSticker method={recipe.method} size={40} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
-            fontFamily: "var(--bl-font-display)",
-            fontWeight: 600,
+            fontFamily: DISPLAY,
             fontSize: 15,
-            color: "var(--bl-ink)",
+            letterSpacing: "-0.01em",
+            textTransform: "uppercase",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -87,181 +96,150 @@ function FavoriteRow({ recipe, isLast }: { recipe: Recipe; isLast: boolean }) {
         >
           {recipe.name}
         </div>
-        <Mono style={{ fontSize: 12, color: "var(--bl-muted)" }}>
-          {doseG}g : {waterG}g
-        </Mono>
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: ".08em",
+            color: "var(--p-muted)",
+            marginTop: 4,
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          {doseG} : {waterG}
+        </div>
       </div>
       <button
+        className="p-press"
         onClick={() => {
           toggleFavorite(recipe.id)
           haptics.light()
         }}
         aria-label={`Remove ${recipe.name} from favorites`}
         style={{
-          width: 44,
-          height: 44,
+          // Padded out for the thumb, pulled back in so the row keeps the
+          // 12px rhythm of the design.
+          height: 40,
+          padding: "0 8px",
+          margin: "0 -8px",
           flexShrink: 0,
+          background: "none",
+          border: "none",
+          color: "var(--p-accent)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "var(--bl-caramel)",
         }}
       >
-        <Heart weight="fill" size={20} />
+        <Heart size={18} />
       </button>
       <button
-        onClick={brew}
+        className="p-press"
+        onClick={() => {
+          startSession(makePlan(recipe, memory, pendingTweaks[recipe.id]?.chipLabel))
+          haptics.medium()
+        }}
         style={{
-          minHeight: 44,
-          padding: "0 18px",
+          minHeight: 40,
+          padding: "0 16px",
           flexShrink: 0,
-          borderRadius: 999,
           border: "none",
-          background: accent.main,
-          color: "var(--bl-brand-ink)",
-          fontFamily: "var(--bl-font-display)",
-          fontSize: 13,
-          fontWeight: 600,
-          letterSpacing: "0.02em",
-          cursor: "pointer",
-          transition: "transform .12s",
+          borderRadius: 999,
+          background: "var(--p-accent)",
+          color: "var(--p-accent-ink)",
+          fontFamily: DISPLAY,
+          fontSize: 12,
+          letterSpacing: ".08em",
+          textTransform: "uppercase",
         }}
       >
         Brew
       </button>
-    </Row>
+    </div>
   )
 }
 
-/** Library tab root: favorites, plus placeholders for my recipes and the bean shelf. */
+/** Library tab root: favorites, plus the shelves that arrive in later releases. */
 export function LibraryTab() {
   const favorites = useBrewLab((s) => s.favorites)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [appearanceOpen, setAppearanceOpen] = useState(false)
   const favoriteRecipes = RECIPES.filter((r) => favorites.includes(r.id))
 
+  if (appearanceOpen) return <Appearance onBack={() => setAppearanceOpen(false)} />
+
   return (
-    <div style={{ padding: "24px 24px 120px", animation: "bl-fade-in .25s ease" }}>
-      <Row style={{ justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+    <div style={{ padding: "62px 0 120px" }}>
+      <div
+        style={{
+          padding: "10px 20px 14px",
+          borderBottom: "2px solid var(--p-ink)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+        }}
+      >
         <div>
+          <PageTitle>Library</PageTitle>
+          <Label style={{ marginTop: 6 }}>Your recipes, kept close</Label>
+        </div>
+        <RoundBtn size={44} onClick={() => setSettingsOpen(true)} label="Settings">
+          <GearSix size={18} />
+        </RoundBtn>
+      </div>
+
+      <div style={{ padding: "22px 20px 0" }}>
+        <Label>Favorites</Label>
+        {favoriteRecipes.length === 0 ? (
           <div
             style={{
-              fontFamily: "var(--bl-font-display)",
-              fontSize: 28,
-              fontWeight: 700,
-              color: "var(--bl-ink)",
-              marginBottom: 4,
+              marginTop: 10,
+              border: "2px solid var(--p-ink)",
+              borderRadius: 22,
+              padding: "16px 18px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
             }}
           >
-            Library
-          </div>
-          <div style={{ fontSize: 13, color: "var(--bl-muted)" }}>Your recipes, kept close</div>
-        </div>
-        <button
-          onClick={() => setSettingsOpen(true)}
-          aria-label="Settings"
-          style={{
-            width: 44,
-            height: 44,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 999,
-            border: "1px solid var(--bl-line)",
-            background: "var(--bl-card)",
-            color: "var(--bl-muted)",
-            cursor: "pointer",
-          }}
-        >
-          <GearSix size={22} />
-        </button>
-      </Row>
-
-      <SectionLabel>Favorites</SectionLabel>
-      {favoriteRecipes.length === 0 ? (
-        <Card style={{ padding: 18 }}>
-          <Row>
+            <Heart size={18} style={{ flexShrink: 0, color: "var(--p-accent)" }} />
             <div
               style={{
-                width: 44,
-                height: 44,
-                flexShrink: 0,
-                borderRadius: "var(--bl-radius-sm)",
-                background: "var(--bl-brand-soft)",
-                color: "var(--bl-brand)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                flex: 1,
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: ".08em",
+                textTransform: "uppercase",
+                color: "var(--p-muted)",
               }}
             >
-              <Heart size={22} />
+              Heart a recipe to keep it here
             </div>
-            <div style={{ fontSize: 14, color: "var(--bl-muted)" }}>
-              Heart a recipe to keep it here.
-            </div>
-          </Row>
-        </Card>
-      ) : (
-        <Card>
-          {favoriteRecipes.map((r, i) => (
-            <FavoriteRow key={r.id} recipe={r} isLast={i === favoriteRecipes.length - 1} />
-          ))}
-        </Card>
-      )}
+          </div>
+        ) : (
+          <div style={{ marginTop: 10, borderTop: "2px solid var(--p-ink)" }}>
+            {favoriteRecipes.map((r) => (
+              <FavoriteRow key={r.id} recipe={r} />
+            ))}
+          </div>
+        )}
 
-      <SectionLabel style={{ marginTop: 28 }}>My recipes</SectionLabel>
-      <Card style={{ padding: "14px 16px", opacity: 0.6 }}>
-        <Row>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              flexShrink: 0,
-              borderRadius: "var(--bl-radius-sm)",
-              background: "var(--bl-bg)",
-              color: "var(--bl-faint)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <PencilSimple size={20} />
-          </div>
-          <div style={{ flex: 1, fontSize: 14, color: "var(--bl-muted)" }}>
-            Create your own recipes
-          </div>
-          <VersionPill label="v1.5" />
-        </Row>
-      </Card>
+        <Label style={{ marginTop: 26 }}>My recipes</Label>
+        <ComingCard copy="Create your own recipes" version="V1.5" />
 
-      <SectionLabel style={{ marginTop: 28 }}>Bean shelf</SectionLabel>
-      <Card style={{ padding: "14px 16px", opacity: 0.6 }}>
-        <Row>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              flexShrink: 0,
-              borderRadius: "var(--bl-radius-sm)",
-              background: "var(--bl-bg)",
-              color: "var(--bl-faint)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <BeanGlyph size={20} />
-          </div>
-          <div style={{ flex: 1, fontSize: 14, color: "var(--bl-muted)" }}>
-            Track bags and freshness
-          </div>
-          <VersionPill label="v2" />
-        </Row>
-      </Card>
+        <Label style={{ marginTop: 26 }}>Bean shelf</Label>
+        <ComingCard copy="Track bags and freshness" version="V2" />
+      </div>
 
-      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsSheet
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onAppearance={() => {
+          setSettingsOpen(false)
+          setAppearanceOpen(true)
+        }}
+      />
     </div>
   )
 }

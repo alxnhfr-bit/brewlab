@@ -1,0 +1,17 @@
+/* Pourfect palette tokens. Apply data-palette and data-theme on the app root.
+   Resolve "system" mode to light/dark with prefers-color-scheme before setting data-theme. */
+[data-palette="pink"][data-theme="light"]{--p-bg:#FFF4F8;--p-card:#FFFFFF;--p-ink:#111111;--p-muted:#4A4548;--p-faint:#8F878B;--p-accent:#FF3E9A;--p-accent-ink:#111111;--p-track:#F3DCE6;--p-num:#111111;--p-nav-active:#FF3E9A}
+[data-palette="pink"][data-theme="dark"]{--p-bg:#111111;--p-card:#1C1819;--p-ink:#FFF4F8;--p-muted:#C9BFC4;--p-faint:#6E6669;--p-accent:#FF3E9A;--p-accent-ink:#111111;--p-track:#2A2426;--p-num:#FF3E9A;--p-nav-active:#FF3E9A}
+[data-palette="lime"][data-theme="light"]{--p-bg:#D9F26B;--p-card:#D9F26B;--p-ink:#0F3B2E;--p-muted:#2E5A4B;--p-faint:#5E8474;--p-accent:#0F3B2E;--p-accent-ink:#D9F26B;--p-track:#BFD85C;--p-num:#0F3B2E;--p-nav-active:#D9F26B}
+[data-palette="lime"][data-theme="dark"]{--p-bg:#0F3B2E;--p-card:#0F3B2E;--p-ink:#D9F26B;--p-muted:#A9C46A;--p-faint:#5E8474;--p-accent:#D9F26B;--p-accent-ink:#0F3B2E;--p-track:#1E5243;--p-num:#D9F26B;--p-nav-active:#0F3B2E}
+[data-palette="tangerine"][data-theme="light"]{--p-bg:#F7EFE3;--p-card:#FFFFFF;--p-ink:#2A1633;--p-muted:#5A4A66;--p-faint:#9A8CA3;--p-accent:#FF6B1A;--p-accent-ink:#2A1633;--p-track:#E6DCCF;--p-num:#2A1633;--p-nav-active:#FF6B1A}
+[data-palette="tangerine"][data-theme="dark"]{--p-bg:#2A1633;--p-card:#35203F;--p-ink:#F7EFE3;--p-muted:#C9BBD3;--p-faint:#7A6C86;--p-accent:#FF6B1A;--p-accent-ink:#2A1633;--p-track:#3E2A4A;--p-num:#FF6B1A;--p-nav-active:#FF6B1A}
+
+/* Type */
+:root{--p-font-display:"Archivo Black",sans-serif;--p-font-body:"Archivo",sans-serif}
+
+/* Sticker shapes (clip-path). Burst = 12 points, inner radius 72% of outer. */
+:root{--p-burst:polygon(100.0% 50.0%,84.8% 59.3%,93.3% 75.0%,75.5% 74.5%,75.0% 93.3%,59.3% 84.8%,50.0% 100.0%,40.7% 84.8%,25.0% 93.3%,24.5% 74.5%,6.7% 75.0%,15.2% 59.3%,0.0% 50.0%,15.2% 40.7%,6.7% 25.0%,24.5% 25.5%,25.0% 6.7%,40.7% 15.2%,50.0% 0.0%,59.3% 15.2%,75.0% 6.7%,75.5% 25.5%,93.3% 25.0%,84.8% 40.7%);--p-diamond:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+
+@keyframes blink{50%{opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}

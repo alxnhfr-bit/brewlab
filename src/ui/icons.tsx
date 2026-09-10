@@ -1,81 +1,121 @@
+import type { CSSProperties, ReactNode } from "react"
 import type { BrewMethodId } from "../lib/types"
 
+/** Phosphor, bold weight only (set globally via IconContext in the shell). */
 export {
-  Coffee,
-  Notebook,
-  Books,
-  GearSix,
-  Plus,
   X,
-  CaretRight,
   CaretLeft,
+  CaretRight,
   CaretDown,
   CaretUp,
-  Play,
-  Pause,
+  Plus,
+  Minus,
+  Heart,
+  GearSix,
   Check,
-  Star,
+  SkipBack,
+  SkipForward,
+  ArrowCounterClockwise,
+  ArrowRight,
   Timer,
-  SlidersHorizontal,
   PencilSimple,
   Trash,
-  Heart,
-  ArrowCounterClockwise,
-  Export,
-  MagnifyingGlass,
-  Moon,
-  Sun,
-  SkipForward,
-  SkipBack,
 } from "@phosphor-icons/react"
 
-export interface GlyphProps {
+export interface StickerProps {
   size?: number
+  /** Fill color. Defaults to the palette accent. */
   color?: string
+  children?: ReactNode
+  style?: CSSProperties
 }
 
-/** Custom method glyphs on the shared 24px grid, 1.5px stroke, rounded terminals. */
-export function V60Glyph({ size = 24, color = "currentColor" }: GlyphProps) {
+/** 12-point burst, inner radius 72% of outer. The house shape. */
+export function Burst({ size = 40, color = "var(--p-accent)", children, style }: StickerProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="6.5" rx="7" ry="1.8" />
-      <path d="M5 6.5l4.6 11h4.8L19 6.5" />
-      <path d="M9.6 17.5h4.8" />
-    </svg>
+    <div
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        background: color,
+        clipPath: "var(--p-burst)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
   )
 }
 
-export function AeroGlyph({ size = 24, color = "currentColor" }: GlyphProps) {
+export function Diamond({ size = 40, color = "var(--p-accent)", children, style }: StickerProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="8" y="3.5" width="8" height="2" rx="1" />
-      <rect x="8.8" y="5.5" width="6.4" height="12.5" rx="1.2" />
-      <path d="M10 18h4v2h-4z" />
-    </svg>
+    <div
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        background: color,
+        clipPath: "var(--p-diamond)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
   )
 }
 
-export function ColdGlyph({ size = 24, color = "currentColor" }: GlyphProps) {
+export function Dot({ size = 40, color = "var(--p-ink)", children, style }: StickerProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 4h10l-1 16.5H8L7 4z" />
-      <rect x="10" y="9" width="4" height="4" rx="1" transform="rotate(12 12 11)" />
-      <path d="M7.4 7.5h9.2" opacity=".4" />
-    </svg>
+    <div
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        background: color,
+        borderRadius: 999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
   )
 }
 
-export function MethodGlyph({ method, size = 24, color = "currentColor" }: GlyphProps & { method: BrewMethodId }) {
-  if (method === "v60") return <V60Glyph size={size} color={color} />
-  if (method === "aeropress") return <AeroGlyph size={size} color={color} />
-  return <ColdGlyph size={size} color={color} />
+/**
+ * Methods are coded by SHAPE, not colour: V60 burst, AeroPress circle,
+ * cold brew diamond. Never tint these per method.
+ */
+export function MethodSticker({
+  method,
+  size = 40,
+  style,
+  children,
+}: StickerProps & { method: BrewMethodId }) {
+  if (method === "aeropress") return <Dot size={size} color="var(--p-ink)" style={style}>{children}</Dot>
+  if (method === "coldbrew") return <Diamond size={size} color="var(--p-accent)" style={style}>{children}</Diamond>
+  return <Burst size={size} color="var(--p-accent)" style={style}>{children}</Burst>
 }
 
-export function BeanGlyph({ size = 24, color = "currentColor" }: GlyphProps) {
+/** Header and settings-footer logo: accent burst with a centred ink dot at 34%. */
+export function LogoMark({ size = 26, style }: { size?: number; style?: CSSProperties }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
-      <ellipse cx="12" cy="12" rx="5.5" ry="8" transform="rotate(-30 12 12)" />
-      <path d="M9.5 7.5c1 2 1.2 5 0 9" opacity=".4" />
-    </svg>
+    <Burst size={size} style={style}>
+      <div style={{ width: "34%", height: "34%", borderRadius: 999, background: "var(--p-ink)" }} />
+    </Burst>
   )
+}
+
+/** Rating burst: filled accent up to the score, track beyond it. */
+export function RatingBurst({ filled, size = 30 }: { filled: boolean; size?: number }) {
+  return <Burst size={size} color={filled ? "var(--p-accent)" : "var(--p-track)"} />
 }

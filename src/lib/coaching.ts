@@ -68,13 +68,19 @@ const RULES: Record<Exclude<TasteTag, "just-right">, Record<BrewMethodId, Coachi
   },
 }
 
-export function coachFor(taste: TasteTag, method: BrewMethodId): Tweak | null {
-  if (taste === "just-right") return null
-  const rule = RULES[taste][method]
+/**
+ * Coaching for one or more taste tags. "just-right" carries no advice, so a
+ * selection that is only "just-right" (or empty) returns null. Each remaining
+ * tag contributes one suggestion line, in selection order.
+ */
+export function coachFor(tastes: TasteTag[], method: BrewMethodId): Tweak | null {
+  const problems = tastes.filter((t): t is Exclude<TasteTag, "just-right"> => t !== "just-right")
+  if (problems.length === 0) return null
+  const rules = problems.map((t) => RULES[t][method])
   return {
-    tasteTag: taste,
-    suggestion: rule.suggestion,
-    chipLabel: rule.chipLabel,
+    tasteTags: problems,
+    suggestions: rules.map((r) => r.suggestion),
+    chipLabel: rules.map((r) => r.chipLabel).join(" · "),
     createdAt: Date.now(),
   }
 }
@@ -86,3 +92,13 @@ export const TASTE_OPTIONS: { tag: TasteTag; label: string }[] = [
   { tag: "strong", label: "Strong" },
   { tag: "just-right", label: "Just right" },
 ]
+
+/**
+ * Toggling rule for the taste chips: "just-right" is exclusive with the
+ * problem tags, so picking it clears them and vice versa.
+ */
+export function toggleTaste(current: TasteTag[], tag: TasteTag): TasteTag[] {
+  if (current.includes(tag)) return current.filter((t) => t !== tag)
+  if (tag === "just-right") return ["just-right"]
+  return [...current.filter((t) => t !== "just-right"), tag]
+}

@@ -1,22 +1,16 @@
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useState } from "react"
 import type { BrewMethodId, SessionPlan, SessionStep } from "../../lib/types"
 import { useBrewLab } from "../../lib/store"
 import { METHODS } from "../../lib/recipes"
 import { totalSeconds } from "../../lib/session"
 import { fmt } from "../../lib/format"
 import { haptics } from "../../lib/haptics"
-import { GhostButton, Mono, PrimaryButton, Row, SectionLabel, Segmented, Sheet } from "../../ui/primitives"
+import { Chip, Label, PrimaryPill, Sheet, Stepper } from "../../ui/primitives"
 
 export interface QuickBrewSheetProps {
   open: boolean
   onClose: () => void
   onStart: (plan: SessionPlan) => void
-}
-
-function accentFor(method: BrewMethodId): { main: string; soft: string } {
-  if (method === "aeropress") return { main: "var(--bl-aero)", soft: "var(--bl-aero-soft)" }
-  if (method === "coldbrew") return { main: "var(--bl-cold)", soft: "var(--bl-cold-soft)" }
-  return { main: "var(--bl-v60)", soft: "var(--bl-v60-soft)" }
 }
 
 function clamp(n: number, min: number, max: number): number {
@@ -36,6 +30,13 @@ const DEFAULTS: Record<BrewMethodId, { doseG: number; ratio: number }> = {
   v60: { doseG: 15, ratio: 15 },
   aeropress: { doseG: 14, ratio: 13 },
   coldbrew: { doseG: 80, ratio: 8 },
+}
+
+/** Short codes for the segmented control, one word each. */
+const METHOD_CODES: Record<BrewMethodId, string> = {
+  v60: "V60",
+  aeropress: "Aero",
+  coldbrew: "Cold",
 }
 
 function methodShort(method: BrewMethodId): string {
@@ -82,70 +83,10 @@ function quickPlan(method: BrewMethodId, doseG: number, waterG: number): Session
   }
 }
 
-function RoundBtn({ onClick, children }: { onClick: () => void; children: ReactNode }) {
-  return (
-    <GhostButton
-      onClick={onClick}
-      style={{
-        width: 44,
-        height: 44,
-        minHeight: 44,
-        padding: 0,
-        borderRadius: 999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 20,
-        lineHeight: 1,
-        color: "var(--bl-ink)",
-        flex: "0 0 auto",
-      }}
-    >
-      {children}
-    </GhostButton>
-  )
-}
-
-function DialRow({
-  label,
-  onMinus,
-  onPlus,
-  children,
-  under,
-}: {
-  label: string
-  onMinus: () => void
-  onPlus: () => void
-  children: ReactNode
-  under?: ReactNode
-}) {
-  return (
-    <div style={{ marginBottom: 18 }}>
-      <SectionLabel style={{ marginBottom: 8 }}>{label}</SectionLabel>
-      <Row style={{ justifyContent: "space-between" }}>
-        <RoundBtn onClick={onMinus}>-</RoundBtn>
-        <div style={{ textAlign: "center", flex: 1 }}>{children}</div>
-        <RoundBtn onClick={onPlus}>+</RoundBtn>
-      </Row>
-      {under}
-    </div>
-  )
-}
-
-/** Keyed wrapper: value changes re-run a subtle fade, the odometer feel. */
-function Rolling({ value, children }: { value: string | number; children: ReactNode }) {
-  return (
-    <span key={value} style={{ display: "inline-block", animation: "bl-fade-in .22s ease" }}>
-      {children}
-    </span>
-  )
-}
-
 export function QuickBrewSheet({ open, onClose, onStart }: QuickBrewSheetProps) {
   const [method, setMethod] = useState<BrewMethodId>("v60")
   const [doseG, setDoseG] = useState<number>(DEFAULTS.v60.doseG)
   const [ratio, setRatio] = useState<number>(DEFAULTS.v60.ratio)
-  const accent = accentFor(method)
 
   useEffect(() => {
     if (!open) return
@@ -159,12 +100,11 @@ export function QuickBrewSheet({ open, onClose, onStart }: QuickBrewSheetProps) 
   const waterG = Math.round(doseG * ratio)
   const plan = quickPlan(method, doseG, waterG)
 
-  const pickMethod = (id: string) => {
-    const m = METHODS.find((x) => x.id === id)
-    if (!m || m.id === method) return
-    setMethod(m.id)
-    setDoseG(DEFAULTS[m.id].doseG)
-    setRatio(DEFAULTS[m.id].ratio)
+  const pickMethod = (id: BrewMethodId) => {
+    if (id === method) return
+    setMethod(id)
+    setDoseG(DEFAULTS[id].doseG)
+    setRatio(DEFAULTS[id].ratio)
     haptics.selection()
   }
 
@@ -184,71 +124,90 @@ export function QuickBrewSheet({ open, onClose, onStart }: QuickBrewSheetProps) 
 
   return (
     <Sheet open={open} onClose={onClose} title="Quick brew">
-      <div style={{ fontSize: 13, color: "var(--bl-muted)", marginTop: -8, marginBottom: 16 }}>
-        No recipe, just method, dose, and water.
+      <div style={{ fontSize: 13, fontWeight: 600, color: "var(--p-muted)", marginTop: 8 }}>
+        No recipe. Just method, dose and water.
       </div>
 
-      <div style={{ marginBottom: 20 }}>
-        <Segmented
-          options={METHODS.map((m) => ({ id: m.id, label: m.short }))}
-          value={method}
-          onChange={pickMethod}
-        />
+      <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
+        {METHODS.map((m) => (
+          <Chip
+            key={m.id}
+            selected={m.id === method}
+            onClick={() => pickMethod(m.id)}
+            style={{
+              flex: 1,
+              minHeight: 44,
+              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              letterSpacing: ".1em",
+            }}
+          >
+            {METHOD_CODES[m.id]}
+          </Chip>
+        ))}
       </div>
 
-      <DialRow label="Dose" onMinus={() => stepDose(-0.5)} onPlus={() => stepDose(0.5)}>
-        <Mono style={{ fontSize: 36, fontWeight: 500, color: "var(--bl-ink)" }}>
-          <Rolling value={doseG}>{numStr(doseG)}</Rolling>
-          <span style={{ fontSize: 16, color: "var(--bl-muted)", marginLeft: 2 }}>g</span>
-        </Mono>
-      </DialRow>
+      <div style={{ marginTop: 20 }}>
+        <Label>Dose</Label>
+        <div style={{ marginTop: 8 }}>
+          {/* The unit carries a leading space: the design sets "15 G", not "15G". */}
+          <Stepper
+            value={numStr(doseG)}
+            unit=" G"
+            onMinus={() => stepDose(-0.5)}
+            onPlus={() => stepDose(0.5)}
+          />
+        </div>
+      </div>
 
-      <DialRow
-        label="Ratio"
-        onMinus={() => stepRatio(-0.5)}
-        onPlus={() => stepRatio(0.5)}
-        under={
-          <div style={{ textAlign: "center", marginTop: 6 }}>
-            <Mono style={{ fontSize: 17, fontWeight: 500, color: accent.main }}>
-              <Rolling value={waterG}>{waterG}g</Rolling>
-            </Mono>
-            <span style={{ fontSize: 13, color: "var(--bl-muted)", marginLeft: 5 }}>water</span>
-          </div>
-        }
-      >
-        <Mono style={{ fontSize: 28, fontWeight: 500, color: "var(--bl-ink)" }}>
-          1 : <Rolling value={ratio}>{numStr(ratio)}</Rolling>
-        </Mono>
-      </DialRow>
+      <div style={{ marginTop: 20 }}>
+        <Label>Ratio</Label>
+        <div style={{ marginTop: 8 }}>
+          <Stepper
+            value={`1 : ${numStr(ratio)}`}
+            onMinus={() => stepRatio(-0.5)}
+            onPlus={() => stepRatio(0.5)}
+            below={`${waterG} g water`}
+          />
+        </div>
+      </div>
 
       <div
         style={{
           display: "flex",
           justifyContent: "center",
-          gap: 16,
-          fontSize: 13,
-          color: "var(--bl-muted)",
-          marginBottom: 20,
+          gap: 14,
+          marginTop: 24,
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: ".1em",
+          textTransform: "uppercase",
+          color: "var(--p-muted)",
         }}
       >
         <span>
           {plan.tempC !== null ? (
             <>
-              <Mono style={{ color: "var(--bl-ink)" }}>{plan.tempC}C</Mono> water
+              <span style={{ color: "var(--p-ink)", fontVariantNumeric: "tabular-nums" }}>{plan.tempC}°C</span> water
             </>
           ) : (
             "Cold / ambient"
           )}
         </span>
-        <span style={{ color: "var(--bl-faint)" }}>|</span>
+        <span>·</span>
         <span>
-          about <Mono style={{ color: "var(--bl-ink)" }}>{fmt(totalSeconds(plan))}</Mono>
+          About{" "}
+          <span style={{ color: "var(--p-ink)", fontVariantNumeric: "tabular-nums" }}>{fmt(totalSeconds(plan))}</span>
         </span>
       </div>
 
-      <PrimaryButton onClick={start} color={accent.main}>
-        Start brew
-      </PrimaryButton>
+      <div style={{ marginTop: 22 }}>
+        <PrimaryPill onClick={start} minHeight={60} fontSize={18} style={{ textTransform: "uppercase" }}>
+          Start brew &rarr;
+        </PrimaryPill>
+      </div>
     </Sheet>
   )
 }

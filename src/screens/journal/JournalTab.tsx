@@ -1,60 +1,41 @@
 import { useState } from "react"
 import { useBrewLab } from "../../lib/store"
 import type { JournalEntry } from "../../lib/types"
-import { Card, Mono, SectionLabel } from "../../ui/primitives"
-import { BeanGlyph, MethodGlyph, Notebook, Plus } from "../../ui/icons"
+import { DISPLAY, Label, Meta, PageTitle, RoundBtn } from "../../ui/primitives"
+import { MethodSticker, Plus, RatingBurst } from "../../ui/icons"
 import { EntryDetail } from "./EntryDetail"
 import { ManualLogSheet } from "./ManualLogSheet"
-import { dayLabel, methodAccent, timeOfDay } from "./shared"
+import { dayLabel, startOfDay, tasteSummary, timeOfDay } from "./shared"
 
-function EntryRow({
-  entry,
-  divider,
-  onOpen,
-}: {
-  entry: JournalEntry
-  divider: boolean
-  onOpen: () => void
-}) {
-  const { accent, soft } = methodAccent(entry.method)
+function EntryRow({ entry, onOpen }: { entry: JournalEntry; onOpen: () => void }) {
+  const tastes = tasteSummary(entry.tastes)
   return (
     <button
+      className="p-row"
       onClick={onOpen}
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 12,
+        gap: 14,
         width: "100%",
-        minHeight: 64,
-        padding: "12px 14px",
+        padding: "14px 0",
         background: "none",
         border: "none",
-        borderTop: divider ? "1px solid var(--bl-line)" : "none",
-        cursor: "pointer",
+        borderBottom: "2px solid var(--p-ink)",
+        color: "var(--p-ink)",
         textAlign: "left",
       }}
     >
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: "var(--bl-radius-sm)",
-          background: soft,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-        }}
-      >
-        <MethodGlyph method={entry.method} size={22} color={accent} />
-      </div>
+      <MethodSticker method={entry.method} size={40} />
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
+            fontFamily: DISPLAY,
             fontSize: 15,
-            fontWeight: 500,
-            color: "var(--bl-ink)",
+            lineHeight: 1.1,
+            letterSpacing: "-0.01em",
+            textTransform: "uppercase",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -62,101 +43,48 @@ function EntryRow({
         >
           {entry.recipeName}
         </div>
-        <div
+        <Meta
           style={{
-            fontSize: 12,
-            color: "var(--bl-muted)",
-            marginTop: 3,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
+            marginTop: 4,
+            fontVariantNumeric: "tabular-nums",
             whiteSpace: "nowrap",
             overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
-          <Mono>{timeOfDay(entry.at)}</Mono>
-          <span>·</span>
-          <Mono>
-            {entry.doseG}g : {entry.waterG}g
-          </Mono>
-          {entry.manual && (
-            <>
-              <span>·</span>
-              <span>logged</span>
-            </>
-          )}
-          {!entry.completed && (
-            <>
-              <span>·</span>
-              <span style={{ color: "var(--bl-danger)" }}>incomplete</span>
-            </>
-          )}
-        </div>
+          {timeOfDay(entry.at)} · {entry.doseG} : {entry.waterG}
+          {tastes !== null && ` · ${tastes}`}
+          {entry.manual && " · LOGGED"}
+          {!entry.completed && <span style={{ color: "var(--p-accent)" }}> · INCOMPLETE</span>}
+        </Meta>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: 5,
-          flexShrink: 0,
-        }}
-      >
-        {entry.rating !== undefined && entry.rating > 0 && (
-          <div style={{ display: "flex", gap: 1 }}>
-            {Array.from({ length: entry.rating }, (_, i) => (
-              <BeanGlyph key={i} size={12} color="var(--bl-caramel)" />
-            ))}
-          </div>
-        )}
-        {entry.taste && (
-          <div style={{ width: 8, height: 8, borderRadius: 999, background: "var(--bl-caramel)" }} />
-        )}
+      <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <RatingBurst key={n} size={12} filled={entry.rating !== undefined && n <= entry.rating} />
+        ))}
       </div>
     </button>
   )
 }
 
+/** Sticker-style empty state: label plus an outline card. */
 function EmptyState() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        padding: "72px 24px",
-        animation: "bl-fade-in .25s ease",
-      }}
-    >
+    <div>
+      <Label>No brews yet</Label>
       <div
         style={{
-          width: 64,
-          height: 64,
-          borderRadius: "var(--bl-radius)",
-          background: "var(--bl-brand-soft)",
-          color: "var(--bl-brand)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 16,
-        }}
-      >
-        <Notebook size={28} />
-      </div>
-      <div
-        style={{
-          fontFamily: "var(--bl-font-display)",
-          fontSize: 17,
+          marginTop: 10,
+          border: "2px solid var(--p-ink)",
+          borderRadius: 22,
+          padding: "16px 18px",
+          fontSize: 13,
           fontWeight: 600,
-          color: "var(--bl-ink)",
-          marginBottom: 6,
+          lineHeight: 1.5,
+          color: "var(--p-muted)",
         }}
       >
-        No brews yet
-      </div>
-      <div style={{ fontSize: 14, color: "var(--bl-muted)", lineHeight: 1.5, maxWidth: 260 }}>
         Finish a brew and it lands here automatically, nothing to fill in.
       </div>
     </div>
@@ -174,84 +102,53 @@ export function JournalTab() {
   }
 
   const sorted = [...journal].sort((a, b) => b.at - a.at)
-  const groups: { label: string; entries: JournalEntry[] }[] = []
+  const groups: { key: number; label: string; entries: JournalEntry[] }[] = []
   for (const e of sorted) {
-    const label = dayLabel(e.at)
+    const key = startOfDay(e.at)
     const last = groups[groups.length - 1]
-    if (last && last.label === label) last.entries.push(e)
-    else groups.push({ label, entries: [e] })
+    if (last && last.key === key) last.entries.push(e)
+    else groups.push({ key, label: dayLabel(e.at), entries: [e] })
   }
 
   return (
-    <div style={{ padding: "24px 24px 120px", animation: "bl-fade-in .2s ease" }}>
+    <div style={{ paddingTop: 62, paddingBottom: 120 }}>
       <div
         style={{
+          padding: "10px 20px 14px",
+          borderBottom: "2px solid var(--p-ink)",
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: 24,
+          gap: 12,
         }}
       >
         <div>
-          <h1
-            style={{
-              fontFamily: "var(--bl-font-display)",
-              fontSize: 28,
-              fontWeight: 700,
-              color: "var(--bl-ink)",
-              margin: 0,
-              marginBottom: 4,
-            }}
-          >
-            Journal
-          </h1>
-          <div style={{ fontSize: 13, color: "var(--bl-muted)" }}>
-            {journal.length === 0 ? (
-              "Your brews land here automatically"
-            ) : (
-              <>
-                <Mono>{journal.length}</Mono> {journal.length === 1 ? "brew" : "brews"}
-              </>
-            )}
-          </div>
+          <PageTitle>Journal</PageTitle>
+          <Label style={{ marginTop: 6, fontVariantNumeric: "tabular-nums" }}>
+            {journal.length} {journal.length === 1 ? "brew" : "brews"}
+          </Label>
         </div>
-        <button
-          onClick={() => setLogOpen(true)}
-          aria-label="Log a brew"
-          style={{
-            width: 44,
-            height: 44,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 999,
-            border: "1px solid var(--bl-line)",
-            background: "var(--bl-card)",
-            boxShadow: "var(--bl-shadow-card)",
-            color: "var(--bl-ink)",
-            cursor: "pointer",
-            flexShrink: 0,
-            padding: 0,
-          }}
-        >
-          <Plus size={20} />
-        </button>
+        <RoundBtn size={44} label="Log a brew" onClick={() => setLogOpen(true)}>
+          <Plus size={18} />
+        </RoundBtn>
       </div>
 
-      {journal.length === 0 ? (
-        <EmptyState />
-      ) : (
-        groups.map((g) => (
-          <div key={g.label} style={{ marginBottom: 24 }}>
-            <SectionLabel style={{ marginBottom: 8 }}>{g.label}</SectionLabel>
-            <Card style={{ overflow: "hidden" }}>
-              {g.entries.map((e, i) => (
-                <EntryRow key={e.id} entry={e} divider={i > 0} onOpen={() => setDetailId(e.id)} />
-              ))}
-            </Card>
-          </div>
-        ))
-      )}
+      <div style={{ padding: "22px 20px 0" }}>
+        {journal.length === 0 ? (
+          <EmptyState />
+        ) : (
+          groups.map((g, i) => (
+            <div key={g.key}>
+              <Label style={{ marginTop: i === 0 ? 0 : 26 }}>{g.label}</Label>
+              <div style={{ marginTop: 10, borderTop: "2px solid var(--p-ink)" }}>
+                {g.entries.map((e) => (
+                  <EntryRow key={e.id} entry={e} onOpen={() => setDetailId(e.id)} />
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       <ManualLogSheet open={logOpen} onClose={() => setLogOpen(false)} />
     </div>

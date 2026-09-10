@@ -1,119 +1,204 @@
-import { useEffect, useState } from "react"
-import type { BrewMethodId, DoseMemory, Recipe, Tweak } from "../../lib/types"
+import { useEffect, useMemo, useState } from "react"
+import type { BrewMethodId, Recipe } from "../../lib/types"
 import { useBrewLab, selectLastBrew } from "../../lib/store"
-import { RECIPES, METHODS, recipeById } from "../../lib/recipes"
-import { makePlan } from "../../lib/session"
+import { METHODS, RECIPES, recipeById } from "../../lib/recipes"
+import { totalSeconds } from "../../lib/session"
+import { fmt } from "../../lib/format"
 import { haptics } from "../../lib/haptics"
-import { Card, Chip, GhostButton, Mono, PrimaryButton, Row, SectionLabel } from "../../ui/primitives"
-import { Heart, MethodGlyph, Timer } from "../../ui/icons"
+import { APP_NAME } from "../../lib/brand"
+import { Chip, DISPLAY, Label, PrimaryPill, SpecGrid, TweakPill } from "../../ui/primitives"
+import { ArrowCounterClockwise, Burst, LogoMark, MethodSticker } from "../../ui/icons"
 import { QuickBrewSheet } from "./QuickBrewSheet"
 import { RecipeDetail } from "./RecipeDetail"
-import { GlyphSquare, ParamsLine, TweakChip, methodColors, methodShort, relDate } from "./shared"
+import {
+  doseWaterLabel,
+  methodCode,
+  recipeSubtitle,
+  tempLabel,
+  tweakLabel,
+  useRecipePlan,
+} from "./shared"
 
-function HeroCard({ recipe, lastBrewedAt }: { recipe: Recipe; lastBrewedAt: number }) {
-  const doseMemory = useBrewLab((s) => s.doseMemory)
-  const pendingTweaks = useBrewLab((s) => s.pendingTweaks)
-  const startSession = useBrewLab((s) => s.startSession)
+/** "TUE 9 SEP", the live date in the header bar. */
+function todayLabel(now: Date): string {
+  const weekday = now.toLocaleDateString("en-US", { weekday: "short" })
+  const month = now.toLocaleDateString("en-US", { month: "short" })
+  return `${weekday} ${now.getDate()} ${month}`.toUpperCase()
+}
 
-  const memory: DoseMemory | undefined = doseMemory[recipe.id]
-  const tweak: Tweak | undefined = pendingTweaks[recipe.id]
-  const { accent } = methodColors(recipe.method)
-
-  const doseG = memory?.doseG ?? recipe.doseG
-  const waterG = memory?.waterG ?? recipe.waterG
-  const tempC = memory !== undefined ? memory.tempC : recipe.tempC
-
+function HeaderBar() {
+  const date = useMemo(() => todayLabel(new Date()), [])
   return (
-    <>
-      <SectionLabel>Brew again</SectionLabel>
-      <Card style={{ padding: 20 }}>
-        <Row style={{ gap: 14 }}>
-          <GlyphSquare method={recipe.method} size={52} />
-          <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: 600,
-                fontFamily: "var(--bl-font-display)",
-                lineHeight: 1.2,
-              }}
-            >
-              {recipe.name}
-            </div>
-            <ParamsLine doseG={doseG} waterG={waterG} tempC={tempC} style={{ display: "block", marginTop: 3 }} />
-          </div>
-        </Row>
-        <div style={{ fontSize: 13, color: "var(--bl-muted)", marginTop: 12 }}>
-          Last brewed {relDate(lastBrewedAt)}
-        </div>
-        {tweak && <TweakChip tweak={tweak} style={{ marginTop: 10 }} />}
-        <PrimaryButton
-          color={accent}
-          style={{ marginTop: 16 }}
-          onClick={() => {
-            startSession(makePlan(recipe, memory, tweak?.chipLabel))
-            haptics.medium()
-          }}
-        >
-          Start brew
-        </PrimaryButton>
-      </Card>
-    </>
+    <div
+      style={{
+        padding: "14px 20px",
+        borderBottom: "2px solid var(--p-ink)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <LogoMark size={26} />
+        <span style={{ fontFamily: DISPLAY, fontSize: 20, letterSpacing: "-0.04em", textTransform: "uppercase" }}>
+          {APP_NAME}
+        </span>
+      </div>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: ".12em",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {date}
+      </span>
+    </div>
   )
 }
 
-function FirstBrewCard({ recipe }: { recipe: Recipe }) {
+/** Numbers in the spec grid never reflow when a dial-in changes them. */
+function Num({ children }: { children: string }) {
+  return <span style={{ fontVariantNumeric: "tabular-nums" }}>{children}</span>
+}
+
+/**
+ * The one-tap hero. Same panel for "brew again" and, on an empty journal, for
+ * the first brew of the preferred method.
+ */
+function Hero({ recipe, label }: { recipe: Recipe; label: string }) {
   const startSession = useBrewLab((s) => s.startSession)
-  const { accent } = methodColors(recipe.method)
+  const { plan, tweak } = useRecipePlan(recipe)
+
   return (
-    <>
-      <SectionLabel>Your first brew</SectionLabel>
-      <Card style={{ padding: 20 }}>
-        <Row style={{ gap: 14 }}>
-          <GlyphSquare method={recipe.method} size={52} />
-          <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: 600,
-                fontFamily: "var(--bl-font-display)",
-                lineHeight: 1.2,
-              }}
-            >
-              {recipe.name}
-            </div>
-            <ParamsLine
-              doseG={recipe.doseG}
-              waterG={recipe.waterG}
-              tempC={recipe.tempC}
-              style={{ display: "block", marginTop: 3 }}
-            />
-          </div>
-        </Row>
-        <div style={{ fontSize: 13, color: "var(--bl-muted)", marginTop: 12, lineHeight: 1.5 }}>
-          {recipe.whyLine} A guided timer walks you through every step.
-        </div>
-        <PrimaryButton
-          color={accent}
-          style={{ marginTop: 16 }}
-          onClick={() => {
-            startSession(makePlan(recipe))
-            haptics.medium()
+    <div
+      style={{
+        margin: "20px 20px 0",
+        padding: 20,
+        borderRadius: 28,
+        background: "var(--p-accent)",
+        color: "var(--p-accent-ink)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <Burst
+        size={84}
+        color="var(--p-accent-ink)"
+        style={{ position: "absolute", top: 14, right: 14, transform: "rotate(-12deg)" }}
+      >
+        <span style={{ fontFamily: DISPLAY, fontSize: 15, letterSpacing: "-0.02em", color: "var(--p-accent)" }}>
+          {methodCode(recipe.method)}
+        </span>
+      </Burst>
+
+      <Label style={{ color: "var(--p-accent-ink)" }}>{label}</Label>
+
+      <div
+        style={{
+          fontFamily: DISPLAY,
+          fontSize: 36,
+          lineHeight: 0.95,
+          letterSpacing: "-0.03em",
+          textTransform: "uppercase",
+          marginTop: 14,
+          maxWidth: 230,
+        }}
+      >
+        {recipe.name}
+      </div>
+
+      <SpecGrid
+        style={{ marginTop: 16 }}
+        borderColor="var(--p-accent-ink)"
+        valueSize={20}
+        cells={[
+          { value: <Num>{`${plan.doseG} G`}</Num>, caption: "Coffee" },
+          { value: <Num>{`${plan.waterG} G`}</Num>, caption: "Water" },
+          { value: <Num>{tempLabel(plan.tempC)}</Num>, caption: `${fmt(totalSeconds(plan))} total` },
+        ]}
+      />
+
+      {tweak && (
+        <TweakPill onAccent style={{ marginTop: 14 }}>
+          <ArrowCounterClockwise size={14} />
+          {tweakLabel(tweak)}
+        </TweakPill>
+      )}
+
+      <PrimaryPill
+        minHeight={64}
+        fontSize={20}
+        onClick={() => {
+          startSession(plan)
+          haptics.medium()
+        }}
+        style={{
+          marginTop: 16,
+          background: "var(--p-accent-ink)",
+          color: "var(--p-accent)",
+          letterSpacing: ".02em",
+        }}
+      >
+        START BREW →
+      </PrimaryPill>
+    </div>
+  )
+}
+
+function RecipeRow({ recipe, onOpen }: { recipe: Recipe; onOpen: () => void }) {
+  return (
+    <button
+      className="p-row"
+      onClick={onOpen}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        width: "100%",
+        padding: "14px 0",
+        background: "none",
+        border: "none",
+        borderBottom: "2px solid var(--p-ink)",
+        color: "var(--p-ink)",
+        textAlign: "left",
+      }}
+    >
+      <MethodSticker method={recipe.method} size={40} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            fontFamily: DISPLAY,
+            fontSize: 15,
+            letterSpacing: "-0.01em",
+            textTransform: "uppercase",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
-          Start your first brew
-        </PrimaryButton>
-      </Card>
-    </>
+          {recipe.name}
+        </div>
+        <div style={{ fontSize: 12, color: "var(--p-muted)", marginTop: 3 }}>{recipeSubtitle(recipe)}</div>
+      </div>
+      <span
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          whiteSpace: "nowrap",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {doseWaterLabel(recipe.doseG, recipe.waterG)}
+      </span>
+    </button>
   )
 }
 
 export function BrewTab() {
   const lastBrew = useBrewLab(selectLastBrew)
-  const journalCount = useBrewLab((s) => s.journal.length)
   const preferredMethod = useBrewLab((s) => s.preferredMethod)
-  const favorites = useBrewLab((s) => s.favorites)
-  const toggleFavorite = useBrewLab((s) => s.toggleFavorite)
   const startSession = useBrewLab((s) => s.startSession)
 
   const [detailId, setDetailId] = useState<string | null>(null)
@@ -135,118 +220,73 @@ export function BrewTab() {
   const filtered = methodFilter === null ? RECIPES : RECIPES.filter((r) => r.method === methodFilter)
 
   return (
-    <div style={{ padding: "24px 24px 120px", animation: "bl-fade-in .25s ease" }}>
-      <div style={{ fontSize: 28, fontWeight: 700, fontFamily: "var(--bl-font-display)", marginBottom: 4 }}>
-        Brew
-      </div>
-      <div style={{ fontSize: 13, color: "var(--bl-muted)", marginBottom: 24 }}>Craft better coffee</div>
+    <div style={{ paddingTop: 62, paddingBottom: 120 }}>
+      <HeaderBar />
 
-      {journalCount > 0 && lastBrew && lastRecipe ? (
-        <HeroCard recipe={lastRecipe} lastBrewedAt={lastBrew.at} />
+      {lastRecipe ? (
+        <Hero recipe={lastRecipe} label="Brew again" />
       ) : (
-        <FirstBrewCard recipe={firstRecipe} />
+        <Hero recipe={firstRecipe} label="Your first brew" />
       )}
 
-      <SectionLabel style={{ marginTop: 28 }}>Recipes</SectionLabel>
-      <Row style={{ gap: 8 }}>
-        {METHODS.map((m) => {
-          const selected = methodFilter === m.id
-          return (
-            <Chip
-              key={m.id}
-              selected={selected}
-              color={methodColors(m.id).accent}
-              onClick={() => {
-                setMethodFilter(selected ? null : m.id)
-                haptics.selection()
-              }}
-              style={{ minHeight: 44, display: "inline-flex", alignItems: "center" }}
-            >
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                <MethodGlyph method={m.id} size={16} />
-                {m.short}
-              </span>
-            </Chip>
-          )
-        })}
-      </Row>
+      <div style={{ display: "flex", margin: "24px 20px 0", gap: 8 }}>
+        <Chip
+          selected={methodFilter === null}
+          onClick={() => {
+            setMethodFilter(null)
+            haptics.selection()
+          }}
+        >
+          All
+        </Chip>
+        {METHODS.map((m) => (
+          <Chip
+            key={m.id}
+            selected={methodFilter === m.id}
+            onClick={() => {
+              setMethodFilter(m.id)
+              haptics.selection()
+            }}
+          >
+            {methodCode(m.id)}
+          </Chip>
+        ))}
+      </div>
 
-      <Card style={{ marginTop: 16, overflow: "hidden" }}>
-        {filtered.map((r, i) => {
-          const fav = favorites.includes(r.id)
-          return (
-            <div
-              key={r.id}
-              onClick={() => setDetailId(r.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 8px 12px 16px",
-                borderTop: i > 0 ? "1px solid var(--bl-line)" : "none",
-                cursor: "pointer",
-                minHeight: 64,
-              }}
-            >
-              <GlyphSquare method={r.method} size={40} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 600,
-                    fontFamily: "var(--bl-font-display)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {r.name}
-                </div>
-                <div style={{ fontSize: 12, color: "var(--bl-muted)", marginTop: 1 }}>
-                  {r.author}, {r.roast} roast
-                </div>
-              </div>
-              <Mono style={{ fontSize: 12, color: "var(--bl-muted)", flexShrink: 0 }}>
-                {r.doseG}g : {r.waterG}g
-              </Mono>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  toggleFavorite(r.id)
-                  haptics.selection()
-                }}
-                aria-label={fav ? `Unfavorite ${r.name}` : `Favorite ${r.name}`}
-                style={{
-                  width: 44,
-                  height: 44,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: fav ? "var(--bl-caramel)" : "var(--bl-faint)",
-                  flexShrink: 0,
-                }}
-              >
-                <Heart size={20} weight={fav ? "fill" : "light"} />
-              </button>
-            </div>
-          )
-        })}
+      <div style={{ margin: "20px 20px 0", borderTop: "2px solid var(--p-ink)" }}>
+        {filtered.map((r) => (
+          <RecipeRow key={r.id} recipe={r} onOpen={() => setDetailId(r.id)} />
+        ))}
         {filtered.length === 0 && (
-          <div style={{ padding: 20, fontSize: 13, color: "var(--bl-faint)" }}>
-            No {methodFilter !== null ? methodShort(methodFilter) : ""} recipes yet.
+          <div style={{ padding: "20px 0", borderBottom: "2px solid var(--p-ink)" }}>
+            <Label>No recipes for this method yet.</Label>
           </div>
         )}
-      </Card>
+      </div>
 
-      <GhostButton onClick={() => setQuickOpen(true)} style={{ width: "100%", marginTop: 12 }}>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-          <Timer size={18} />
-          Quick brew: just a timer
-        </span>
-      </GhostButton>
+      <button
+        className="p-press"
+        onClick={() => setQuickOpen(true)}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "calc(100% - 40px)",
+          margin: "20px 20px 0",
+          padding: "14px 20px",
+          border: "2px dashed var(--p-ink)",
+          borderRadius: 999,
+          background: "transparent",
+          color: "var(--p-ink)",
+          fontSize: 13,
+          fontWeight: 700,
+          letterSpacing: ".08em",
+          textTransform: "uppercase",
+        }}
+      >
+        Just a timer
+        <span>→</span>
+      </button>
 
       <QuickBrewSheet
         open={quickOpen}

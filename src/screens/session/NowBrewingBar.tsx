@@ -1,68 +1,79 @@
+import { useEffect } from "react"
 import { useBrewLab } from "../../lib/store"
 import { stepRemainingMs } from "../../lib/session"
 import { fmt } from "../../lib/format"
 import { useNow } from "../../lib/useNow"
 import { haptics } from "../../lib/haptics"
 import type { SessionStep } from "../../lib/types"
-import { Mono } from "../../ui/primitives"
-import { MethodGlyph } from "../../ui/icons"
-import { accentFor } from "./accent"
+import { DISPLAY } from "../../ui/primitives"
+import { Burst } from "../../ui/icons"
 
 /**
- * Docked mini-bar above the tab bar while a running or paused session is
- * minimized. One tap anywhere returns to the session.
+ * Now Brewing: the accent pill that floats above the tab bar while a running
+ * or paused session is minimized. One tap anywhere restores the session.
+ * It is the only surface mounted while minimized, so it also carries the
+ * wall-clock step advance that the session overlay runs when it is open.
  */
 export function NowBrewingBar() {
   const session = useBrewLab((s) => s.session)
   const setMinimized = useBrewLab((s) => s.setMinimized)
+  const advanceStep = useBrewLab((s) => s.advanceStep)
+
   const visible =
     session !== null && session.minimized && (session.phase === "running" || session.phase === "paused")
-  const now = useNow(visible && session !== null && session.phase === "running", 200)
+  const running = visible && session !== null && session.phase === "running"
+  const now = useNow(running, 200)
+  const remainingMs = session !== null && visible ? stepRemainingMs(session, now) : 0
+  const stepEndsAt = session?.stepEndsAt ?? null
+
+  useEffect(() => {
+    if (running && stepEndsAt !== null && remainingMs <= 0) {
+      advanceStep()
+      haptics.stepTick()
+    }
+  }, [running, stepEndsAt, remainingMs, advanceStep])
+
   if (!visible || !session) return null
 
   const plan = session.plan
-  const accent = accentFor(plan.method)
   const step: SessionStep | undefined = plan.steps[session.stepIndex]
-  const remainingSec = Math.ceil(stepRemainingMs(session, now) / 1000)
+  const paused = session.phase === "paused"
 
   return (
     <button
+      className="p-press"
       onClick={() => {
         setMinimized(false)
         haptics.light()
       }}
       style={{
         position: "fixed",
-        bottom: "calc(64px + env(safe-area-inset-bottom))",
+        bottom: "calc(88px + env(safe-area-inset-bottom))",
         left: "50%",
         transform: "translateX(-50%)",
         width: "calc(100% - 24px)",
-        maxWidth: 396,
-        zIndex: 250,
+        maxWidth: 416,
+        zIndex: 150,
         display: "flex",
         alignItems: "center",
         gap: 12,
-        minHeight: 56,
-        padding: "10px 16px 10px 13px",
-        background: "var(--bl-card)",
-        border: "1px solid var(--bl-line)",
-        borderLeft: `3px solid ${accent.main}`,
-        borderRadius: "var(--bl-radius)",
-        boxShadow: "var(--bl-shadow-float)",
-        cursor: "pointer",
+        padding: "10px 18px 10px 10px",
+        border: "none",
+        borderRadius: 999,
+        background: "var(--p-accent)",
+        color: "var(--p-accent-ink)",
+        boxShadow: "0 12px 28px rgba(0,0,0,.18)",
         textAlign: "left",
-        animation: "bl-sheet-up .22s cubic-bezier(.2,.9,.3,1)",
       }}
     >
-      <span style={{ display: "inline-flex", flexShrink: 0, color: accent.main }}>
-        <MethodGlyph method={plan.method} size={24} />
-      </span>
-      <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+      <Burst size={36} color="var(--p-accent-ink)" />
+      <span style={{ flex: 1, minWidth: 0 }}>
         <span
           style={{
-            fontSize: 14,
-            fontWeight: 600,
-            color: "var(--bl-ink)",
+            display: "block",
+            fontFamily: DISPLAY,
+            fontSize: 13,
+            textTransform: "uppercase",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -73,24 +84,34 @@ export function NowBrewingBar() {
         {step && (
           <span
             style={{
-              fontSize: 12,
-              color: "var(--bl-muted)",
+              display: "block",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: ".1em",
+              textTransform: "uppercase",
+              marginTop: 2,
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}
           >
             {step.label}
+            {step.waterTargetG !== undefined && ` · to ${step.waterTargetG} g`}
+            {paused && " · paused"}
           </span>
         )}
       </span>
-      {session.phase === "paused" ? (
-        <span style={{ fontSize: 13, fontWeight: 500, color: "var(--bl-muted)", flexShrink: 0 }}>Paused</span>
-      ) : (
-        <Mono style={{ fontSize: 15, fontWeight: 500, color: "var(--bl-ink)", flexShrink: 0 }}>
-          {fmt(remainingSec)}
-        </Mono>
-      )}
+      <span
+        style={{
+          flexShrink: 0,
+          fontFamily: DISPLAY,
+          fontSize: 18,
+          letterSpacing: "-0.02em",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {fmt(Math.ceil(remainingMs / 1000))}
+      </span>
     </button>
   )
 }

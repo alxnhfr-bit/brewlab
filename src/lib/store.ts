@@ -5,6 +5,7 @@ import type {
   BrewMethodId,
   DoseMemory,
   JournalEntry,
+  PaletteId,
   SessionPlan,
   Settings,
   TasteTag,
@@ -21,7 +22,7 @@ function uid(): string {
 
 export interface FinalizeInput {
   rating?: number
-  taste?: TasteTag
+  tastes?: TasteTag[]
   saveTweak?: boolean
 }
 
@@ -37,6 +38,7 @@ interface BrewLabState {
 
   completeOnboarding: (method: BrewMethodId | null) => void
   setTheme: (theme: ThemeSetting) => void
+  setPalette: (palette: PaletteId) => void
   setSetting: (key: "haptics" | "sound", value: boolean) => void
   toggleFavorite: (recipeId: string) => void
   rememberDose: (recipeId: string, memory: DoseMemory) => void
@@ -62,7 +64,7 @@ export const useBrewLab = create<BrewLabState>()(
     (set, get) => ({
       hasOnboarded: false,
       preferredMethod: null,
-      settings: { theme: "system", haptics: true, sound: true },
+      settings: { theme: "system", palette: "pink", haptics: true, sound: true },
       journal: [],
       favorites: [],
       doseMemory: {},
@@ -72,6 +74,8 @@ export const useBrewLab = create<BrewLabState>()(
       completeOnboarding: (method) => set({ hasOnboarded: true, preferredMethod: method }),
 
       setTheme: (theme) => set((s) => ({ settings: { ...s.settings, theme } })),
+
+      setPalette: (palette) => set((s) => ({ settings: { ...s.settings, palette } })),
 
       setSetting: (key, value) => set((s) => ({ settings: { ...s.settings, [key]: value } })),
 
@@ -205,15 +209,18 @@ export const useBrewLab = create<BrewLabState>()(
           completed: s.phase === "complete",
           manual: false,
           rating: input.rating,
-          taste: input.taste,
+          tastes: input.tastes && input.tastes.length > 0 ? input.tastes : undefined,
           tweakApplied: s.plan.tweakApplied,
         }
+        const tastes = input.tastes ?? []
         const tweaks = { ...state.pendingTweaks }
         if (s.plan.recipeId) {
-          if (input.saveTweak && input.taste && input.taste !== "just-right") {
-            const tweak = coachFor(input.taste, s.plan.method)
-            if (tweak) tweaks[s.plan.recipeId] = tweak
-          } else if (s.plan.tweakApplied || input.taste === "just-right") {
+          const coaching = input.saveTweak ? coachFor(tastes, s.plan.method) : null
+          if (coaching) {
+            tweaks[s.plan.recipeId] = coaching
+          } else if (s.plan.tweakApplied || tastes.includes("just-right")) {
+            // The brew was either rated good or already carried a tweak that
+            // was not renewed, so the recipe goes back to its saved settings.
             delete tweaks[s.plan.recipeId]
           }
         }
@@ -271,7 +278,23 @@ export const useBrewLab = create<BrewLabState>()(
     }),
     {
       name: "brewlab-store",
-      version: 1,
+      version: 2,
+      migrate: (persisted, fromVersion) => {
+        const state = persisted as Partial<BrewLabState>
+        if (fromVersion < 2) {
+          // v1 stored a single taste tag per entry and had no palette setting.
+          const legacy = state.journal as
+            | (JournalEntry & { taste?: TasteTag })[]
+            | undefined
+          state.journal = legacy?.map((entry) => {
+            const { taste, ...rest } = entry
+            return taste ? { ...rest, tastes: [taste] } : rest
+          })
+          state.settings = { theme: "system", palette: "pink", haptics: true, sound: true, ...state.settings }
+          state.pendingTweaks = {}
+        }
+        return state as BrewLabState
+      },
     }
   )
 )
