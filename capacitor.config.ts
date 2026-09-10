@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 // permanent on both stores. Derived from the personal GitHub handle for now.
 const config: CapacitorConfig = {
   appId: 'com.alxnhfr.brewlab',
-  appName: 'Pourfect',
+  appName: '15GRMS',
   webDir: 'dist',
   plugins: {
     SplashScreen: {

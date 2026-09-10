@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react"
 
 /*
- * Pourfect primitives. Shape language: 2px ink rules, pill radii (999),
+ * 15GRMS primitives. Shape language: 2px ink rules, pill radii (999),
  * 22px cards, 28px hero/sheet corners, no shadows except the mini-bar.
  * Colours always come from the palette tokens, never hardcoded.
  */

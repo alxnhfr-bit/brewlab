@@ -1,4 +1,4 @@
-/* Pourfect palette tokens. `data-palette` and `data-theme` are set on the
+/* 15GRMS palette tokens. `data-palette` and `data-theme` are set on the
    document element by the shell; "system" is resolved to light/dark before
    the attribute is written, so only light/dark ever appear here. */
 

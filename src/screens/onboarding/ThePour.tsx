@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react"
 import type { BrewMethodId } from "../../lib/types"
 import { METHODS } from "../../lib/recipes"
 import { haptics } from "../../lib/haptics"
-import { APP_NAME, APP_TAGLINE } from "../../lib/brand"
+import { APP_TAGLINE, WORDMARK_BOTTOM, WORDMARK_TOP } from "../../lib/brand"
 import { DISPLAY, Label } from "../../ui/primitives"
 import { Burst, MethodSticker } from "../../ui/icons"
 
-/* The wordmark is stacked on two lines inside the burst: POUR / FECT. */
-const WORD_TOP = APP_NAME.slice(0, 4).toUpperCase()
-const WORD_BOTTOM = APP_NAME.slice(4).toUpperCase()
+const WORD_TOP = WORDMARK_TOP
+const WORD_BOTTOM = WORDMARK_BOTTOM
 
 /**
  * First run, "The Pour": one screen, one question, no tour.

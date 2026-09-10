@@ -1,8 +1,19 @@
 /**
  * Public product name. Working title: the repo, bundle id and persisted store
- * key stay "brewlab", so swapping this constant renames the whole UI.
+ * key stay "brewlab", so swapping these constants renames the whole UI.
+ *
+ * 15GRMS reads as "fifteen grams", the canonical single cup dose that the app
+ * already prints on the Brew Again card.
  */
-export const APP_NAME = "Pourfect"
+export const APP_NAME = "15GRMS"
+
+/**
+ * The wordmark stacks on two lines inside the onboarding burst. Kept explicit
+ * rather than sliced from APP_NAME, because the right break point is a design
+ * decision, not a character count.
+ */
+export const WORDMARK_TOP = "15"
+export const WORDMARK_BOTTOM = "GRMS"
 
 export const APP_TAGLINE = "Your coffee, step by step."
 

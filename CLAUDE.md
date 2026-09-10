@@ -1,11 +1,13 @@
-# BrewLab (public name: Pourfect)
+# BrewLab (public name: 15GRMS)
 
 Coffee brewing companion app: guided recipes, brew ratio calculator, brew journal.
 
 **Naming:** `brewlab` is the repo codename only, and stays in the repo name, the bundle id
 (`com.alxnhfr.brewlab`) and the persisted store key (`brewlab-store`). The public name in the UI is
-**Pourfect**, a working title held in one constant, `APP_NAME` in [src/lib/brand.ts](src/lib/brand.ts).
-Pourfect has NOT been through trademark/store clearance yet (see Open decisions).
+**15GRMS** ("fifteen grams"), held in [src/lib/brand.ts](src/lib/brand.ts) as `APP_NAME` plus
+`WORDMARK_TOP` / `WORDMARK_BOTTOM` (the two-line burst lockup, "15" over "GRMS"). Chosen 2026-09-10
+after Pourfect was found blocked; see Open decisions for the clearance trail. The app icon is
+textless (burst plus drop), so it survived the rename unchanged; only the wordmark is name-bearing.
 
 ## Product intent (IMPORTANT)
 
