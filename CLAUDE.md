@@ -152,3 +152,17 @@ CocoaPods, and Android Studio. Install those, then add platforms.
   clearer it reads as "brew", the weaker the mark; the more distinctive it is legally, the less it
   communicates and the harder it is to spell, pronounce or find in store search, which is this app's
   main discovery channel. EU/DPMA registers still unchecked (not web-indexed).
+- **"BR3W" checked 2026-09-10: REJECTED, worse than BRRW on both axes.** No iOS app holds the display
+  name, but the name is already occupied in this exact niche: `br3w22.com` is a live coffee brewing
+  site selling essentially this product ("exact ratios, weights, step by step techniques, saved
+  favourites, community recipes, gear", billed as "the home barista's playbook"), there is a "BR3W"
+  smart coffee machine project with a React Native companion app, and `br3w.app` (the TLD we would
+  want) is an actively branded Next.js site, "If you know, you know". `br3w.com` is taken too.
+  Legally it is weaker than BRRW, not stronger: swapping 3 for E is a textbook novel spelling, so
+  TMEP 1209.03(j) reads it as "BREW", which for a coffee brewing app is arguably generic rather than
+  merely descriptive, and generic terms cannot be registered even with acquired distinctiveness.
+  It also breaks word of mouth and voice search, and collides with the exact word users type.
+- **Competitor intel found while checking names (worth knowing regardless):** the short-coffee-name
+  space is heavily fished, and `brevv` (iOS, "brew perfect coffee") is a near-identical product:
+  V60/Chemex/Kalita/AeroPress step-by-step guides, bag scanning, brew logging and rating. Others in
+  the cluster: bruu, BROG, Bruvi, Breve, Brewlee, Brevity.
