@@ -174,6 +174,29 @@ CocoaPods, and Android Studio. Install those, then add platforms.
   "15G" also carries heavy semantic noise: globally it reads as India's Form 15G tax declaration,
   and it is confusable with 5G. Product critique too: the app spans 11 g to 100 g doses and its whole
   point is dialling to YOUR dose, so naming it after one fixed number narrows the idea.
+- **"Pourfect" checked 2026-09-10: REJECTED, and it is the name currently in the UI.** Confirmed via
+  Apple's own iTunes lookup API: **"Pourfect: Coffee Journal"** (Dawnshard Software LLC, id 6745131265)
+  is LIVE on the iOS App Store in **Food & Drink**, the same category we would ship into, released
+  2025-05-04. Apple requires effectively unique display names, so the bare name is unavailable and even
+  a subtitled variant would sit beside a same-named coffee app, exactly the BrewLab failure. Also:
+  "PourFect: Color Sort Game" and other Pourfect games occupy the name on Play, POURfect(R) kitchenware
+  (Dyce LLC, Scottsdale, since 2009) uses the registered symbol in class 21, POURFECTION is a
+  registered US mark (Reg 5647293) whose logo uses a coffee cup as the letter U, POURFECT LTD is an
+  active UK company (inc. July 2025), plus a resin-art Pourfect in India and a Pourfect AI cocktail
+  app. pourfect.com is parked for sale, pourfect.app is a Squarespace "Coming Soon".
+  **Action required: APP_NAME in src/lib/brand.ts still says Pourfect, and the wordmark, app icon and
+  splash all spell POUR/FECT. These must change before any store submission.**
+- **Bulk iOS screen run 2026-09-10** (iTunes Search API, exact + prefix match, US store). Taken or
+  conflicted: Pourfect, Steeply, SlowPour (Food & Drink), Aroma Lab, Bloomwise, Bloomly (prefix),
+  Kurve (prefix), Decant (prefix), Tamped ("Tamped: Coffee Journal & Timer"), Brewkit, Steepr
+  ("Steepr: Tea Timer & Brew Guide"), Vessl. Clear on iOS: **Grindwell, Kettly, Cremaline, Craftpour,
+  Pourlab** (all with .app and .coffee free; their .com are parked), plus Gramme (but gramme.app is
+  French bakery software) and Draft Coffee (descriptive).
+- **"Steepwise" checked and rejected despite being clear on iOS.** No trademark or company found, Play
+  namespace free, most domains free, BUT steepwise.app is a **live product**: "SteepWise, a tea journal
+  for people who take tea seriously", with a per-steep timer and gram amounts recalculated for your
+  teapot, multilingual with accounts. That is this app's concept in the adjacent drink, so it is a real
+  confusion risk. **Lesson: an empty App Store result is NOT clearance. Always check the live web too.**
 - **Competitor intel found while checking names (worth knowing regardless):** the short-coffee-name
   space is heavily fished, and `brevv` (iOS, "brew perfect coffee") is a near-identical product:
   V60/Chemex/Kalita/AeroPress step-by-step guides, bag scanning, brew logging and rating. Others in
