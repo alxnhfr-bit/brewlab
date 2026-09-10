@@ -1,11 +1,137 @@
-import { useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { useBrewLab } from "../../lib/store"
+import { haptics } from "../../lib/haptics"
 import type { JournalEntry } from "../../lib/types"
 import { DISPLAY, Label, Meta, PageTitle, RoundBtn } from "../../ui/primitives"
 import { MethodSticker, Plus, RatingBurst } from "../../ui/icons"
 import { EntryDetail } from "./EntryDetail"
 import { ManualLogSheet } from "./ManualLogSheet"
 import { dayLabel, startOfDay, tasteSummary, timeOfDay } from "./shared"
+
+/** How far a row slides to reveal the delete action. */
+const SWIPE_W = 104
+
+/**
+ * Swipe a row left to reveal Delete. Horizontal intent has to beat vertical
+ * intent before the row moves, so the list still scrolls normally, and a drag
+ * swallows the tap so swiping never opens the entry by accident.
+ */
+function SwipeToDelete({
+  open,
+  onOpenChange,
+  onDelete,
+  label,
+  children,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onDelete: () => void
+  label: string
+  children: ReactNode
+}) {
+  const [dx, setDx] = useState(0)
+  const start = useRef<{ x: number; y: number } | null>(null)
+  const axis = useRef<"undecided" | "x" | "y">("undecided")
+  const dragged = useRef(false)
+
+  useEffect(() => {
+    if (!open) setDx(0)
+  }, [open])
+
+  const offset = open && axis.current !== "x" ? -SWIPE_W : dx
+
+  return (
+    <div style={{ position: "relative", overflow: "hidden", borderBottom: "2px solid var(--p-ink)" }}>
+      <button
+        aria-label={`Delete ${label}`}
+        onClick={() => {
+          haptics.medium()
+          onDelete()
+        }}
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: SWIPE_W,
+          border: "none",
+          background: "var(--p-accent)",
+          color: "var(--p-accent-ink)",
+          fontFamily: DISPLAY,
+          fontSize: 12,
+          letterSpacing: ".08em",
+          textTransform: "uppercase",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        Delete
+      </button>
+
+      <div
+        style={{
+          position: "relative",
+          background: "var(--p-bg)",
+          transform: `translateX(${offset}px)`,
+          transition: axis.current === "x" ? "none" : "transform .22s cubic-bezier(.2,.8,.3,1)",
+          touchAction: "pan-y",
+        }}
+        onPointerDown={(e) => {
+          start.current = { x: e.clientX, y: e.clientY }
+          axis.current = "undecided"
+          dragged.current = false
+        }}
+        onPointerMove={(e) => {
+          if (!start.current) return
+          const mx = e.clientX - start.current.x
+          const my = e.clientY - start.current.y
+          if (axis.current === "undecided") {
+            if (Math.abs(mx) < 6 && Math.abs(my) < 6) return
+            axis.current = Math.abs(mx) > Math.abs(my) ? "x" : "y"
+            if (axis.current === "x") {
+              try {
+                e.currentTarget.setPointerCapture(e.pointerId)
+              } catch {
+                // Capture is an optimisation, not a requirement: without it the
+                // drag still tracks, it just stops early if the finger leaves.
+              }
+            }
+          }
+          if (axis.current !== "x") return
+          dragged.current = true
+          const base = open ? -SWIPE_W : 0
+          setDx(Math.max(-SWIPE_W, Math.min(0, base + mx)))
+        }}
+        onPointerUp={() => {
+          if (axis.current === "x") {
+            const shouldOpen = dx < -SWIPE_W / 2
+            onOpenChange(shouldOpen)
+            setDx(shouldOpen ? -SWIPE_W : 0)
+          }
+          axis.current = "undecided"
+          start.current = null
+        }}
+        onPointerCancel={() => {
+          axis.current = "undecided"
+          start.current = null
+          setDx(open ? -SWIPE_W : 0)
+        }}
+        onClickCapture={(e) => {
+          // A swipe must never fall through into opening the entry.
+          if (dragged.current || open) {
+            e.preventDefault()
+            e.stopPropagation()
+            dragged.current = false
+            if (open) onOpenChange(false)
+          }
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
 
 function EntryRow({ entry, onOpen }: { entry: JournalEntry; onOpen: () => void }) {
   const tastes = tasteSummary(entry.tastes)
@@ -21,7 +147,6 @@ function EntryRow({ entry, onOpen }: { entry: JournalEntry; onOpen: () => void }
         padding: "14px 0",
         background: "none",
         border: "none",
-        borderBottom: "2px solid var(--p-ink)",
         color: "var(--p-ink)",
         textAlign: "left",
       }}
@@ -93,8 +218,10 @@ function EmptyState() {
 
 export function JournalTab() {
   const journal = useBrewLab((s) => s.journal)
+  const deleteEntry = useBrewLab((s) => s.deleteEntry)
   const [detailId, setDetailId] = useState<string | null>(null)
   const [logOpen, setLogOpen] = useState(false)
+  const [swipedId, setSwipedId] = useState<string | null>(null)
 
   const detail = detailId !== null ? journal.find((e) => e.id === detailId) : undefined
   if (detail) {
@@ -142,7 +269,18 @@ export function JournalTab() {
               <Label style={{ marginTop: i === 0 ? 0 : 26 }}>{g.label}</Label>
               <div style={{ marginTop: 10, borderTop: "2px solid var(--p-ink)" }}>
                 {g.entries.map((e) => (
-                  <EntryRow key={e.id} entry={e} onOpen={() => setDetailId(e.id)} />
+                  <SwipeToDelete
+                    key={e.id}
+                    open={swipedId === e.id}
+                    onOpenChange={(o) => setSwipedId(o ? e.id : null)}
+                    onDelete={() => {
+                      setSwipedId(null)
+                      deleteEntry(e.id)
+                    }}
+                    label={e.recipeName}
+                  >
+                    <EntryRow entry={e} onOpen={() => setDetailId(e.id)} />
+                  </SwipeToDelete>
                 ))}
               </div>
             </div>

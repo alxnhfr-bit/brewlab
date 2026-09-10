@@ -77,6 +77,16 @@ Design system (near-black ink, 2px rules, Archivo Black display type, sticker sh
   screen: palette cards each previewing their own palette, plus mode pills and a live hero preview),
   `onboarding/` (ThePour, CSS/SVG animated first run).
 
+Two behaviours were added after the handoff, which does not specify either:
+- **Ending a running brew.** The session header's X used to minimize on tap and abandon the brew on a
+  hidden 600ms long press, announced only through an aria-label, so ending a brew was undiscoverable
+  and could fire by accident. Tapping X now swaps the header for an explicit "Keep brewing" (outline)
+  / "End brew" (accent) pair that reverts after 5 seconds. The resting header is unchanged.
+- **Deleting journal entries from the list.** EntryDetail already had a two-tap Delete; the list had
+  nothing. Journal rows now swipe left to reveal a Delete action (`SwipeToDelete` in JournalTab).
+  Horizontal intent must beat vertical intent before the row moves, so the list still scrolls, and a
+  drag swallows the tap so swiping never opens the entry.
+
 Verified screen by screen against `design_handoff_pourfect_overhaul/screenshots/` at 402px in the
 browser: all 14 screens, all three palettes, light and dark, plus the 1-tap brew-again loop,
 wall-clock timer with pause/scrub/auto-advance, minimize/mini-bar, multi-select taste coaching

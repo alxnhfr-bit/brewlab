@@ -266,23 +266,12 @@ function RunningView({ session }: { session: ActiveSession }) {
           letterSpacing: ".12em",
         }}
       >
-        <CloseButton onMinimize={() => setMinimized(true)} onEnd={abandonSession} />
-        <span
-          style={{
-            flex: 1,
-            minWidth: 0,
-            textAlign: "center",
-            textTransform: "uppercase",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {plan.recipeName}
-        </span>
-        <span style={{ fontVariantNumeric: "tabular-nums" }}>
-          {session.stepIndex + 1} / {plan.steps.length}
-        </span>
+        <SessionHeader
+          recipeName={plan.recipeName}
+          stepLabel={`${session.stepIndex + 1} / ${plan.steps.length}`}
+          onMinimize={() => setMinimized(true)}
+          onEnd={abandonSession}
+        />
       </div>
 
       <div style={{ display: "flex", gap: 4, marginTop: 16 }}>
@@ -423,12 +412,27 @@ function RunningView({ session }: { session: ActiveSession }) {
 }
 
 /**
- * The header carries a single control, so a tap dismisses the session to the
- * Now Brewing mini-bar (it keeps running) and a long press ends the brew.
+ * Session header. At rest it is the designed row: close, recipe name, step
+ * count. Tapping close swaps the row for an explicit choice between leaving
+ * the brew running in the mini-bar and ending it, because ending a brew is
+ * destructive and used to be reachable only by an invisible long press.
+ * The prompt reverts on its own after a few seconds.
  */
-function CloseButton({ onMinimize, onEnd }: { onMinimize: () => void; onEnd: () => void }) {
+const PROMPT_TIMEOUT_MS = 5000
+
+function SessionHeader({
+  recipeName,
+  stepLabel,
+  onMinimize,
+  onEnd,
+}: {
+  recipeName: string
+  stepLabel: string
+  onMinimize: () => void
+  onEnd: () => void
+}) {
+  const [prompt, setPrompt] = useState(false)
   const timerRef = useRef<number | null>(null)
-  const heldRef = useRef(false)
 
   const clear = useCallback(() => {
     if (timerRef.current !== null) {
@@ -439,42 +443,108 @@ function CloseButton({ onMinimize, onEnd }: { onMinimize: () => void; onEnd: () 
 
   useEffect(() => clear, [clear])
 
+  const openPrompt = () => {
+    setPrompt(true)
+    haptics.light()
+    clear()
+    timerRef.current = window.setTimeout(() => setPrompt(false), PROMPT_TIMEOUT_MS)
+  }
+
+  const closePrompt = () => {
+    clear()
+    setPrompt(false)
+  }
+
   return (
-    <button
-      className="p-press"
-      aria-label="Minimize, hold to end the brew"
-      onPointerDown={() => {
-        heldRef.current = false
-        clear()
-        timerRef.current = window.setTimeout(() => {
-          heldRef.current = true
-          haptics.medium()
-          onEnd()
-        }, 600)
-      }}
-      onPointerUp={clear}
-      onPointerLeave={clear}
-      onPointerCancel={clear}
-      onClick={() => {
-        clear()
-        if (!heldRef.current) onMinimize()
-      }}
-      style={{
-        width: 28,
-        height: 28,
-        flexShrink: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginLeft: -4,
-        padding: 0,
-        border: "none",
-        background: "none",
-        color: "var(--p-ink)",
-      }}
-    >
-      <X size={18} />
-    </button>
+    <>
+      <button
+        className="p-press"
+        aria-label={prompt ? "Keep brewing" : "Close the brew session"}
+        onClick={prompt ? closePrompt : openPrompt}
+        style={{
+          width: 28,
+          height: 28,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginLeft: -4,
+          padding: 0,
+          border: "none",
+          background: "none",
+          color: "var(--p-ink)",
+        }}
+      >
+        <X size={18} />
+      </button>
+
+      {prompt ? (
+        <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
+          <button
+            className="p-press p-outline"
+            onClick={() => {
+              clear()
+              onMinimize()
+            }}
+            style={{
+              minHeight: 34,
+              padding: "0 14px",
+              border: "2px solid var(--p-ink)",
+              borderRadius: 999,
+              background: "transparent",
+              color: "var(--p-ink)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: ".1em",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Keep brewing
+          </button>
+          <button
+            className="p-press"
+            onClick={() => {
+              clear()
+              haptics.medium()
+              onEnd()
+            }}
+            style={{
+              minHeight: 34,
+              padding: "0 14px",
+              border: "2px solid var(--p-accent)",
+              borderRadius: 999,
+              background: "var(--p-accent)",
+              color: "var(--p-accent-ink)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: ".1em",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+            }}
+          >
+            End brew
+          </button>
+        </div>
+      ) : (
+        <>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              textAlign: "center",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {recipeName}
+          </span>
+          <span style={{ fontVariantNumeric: "tabular-nums" }}>{stepLabel}</span>
+        </>
+      )}
+    </>
   )
 }
 
