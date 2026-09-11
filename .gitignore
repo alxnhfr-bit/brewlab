@@ -4,3 +4,13 @@ dist-ssr
 *.local
 .DS_Store
 *.tsbuildinfo
+
+# Capacitor iOS: the native project is committed, its build output is not.
+ios/App/App/public/
+ios/App/Pods/
+ios/App/build/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+ios/DerivedData/
+*.xcuserstate
