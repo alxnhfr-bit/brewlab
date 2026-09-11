@@ -13,11 +13,22 @@
 
 html, body {
   margin: 0;
+  /* The document itself must never scroll. In a WKWebView, scrolling the
+     document rubber-bands past its end, and position:fixed chrome (the tab
+     bar, the mini-bar) is dragged along with the bounce. The app shell owns
+     the scrolling instead, so the chrome stays welded to the viewport. */
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--p-bg);
   color: var(--p-ink);
   font-family: var(--p-font-body);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  height: 100%;
 }
 
 button {

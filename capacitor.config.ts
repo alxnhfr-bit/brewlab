@@ -19,7 +19,9 @@ const config: CapacitorConfig = {
     },
   },
   ios: {
-    contentInset: 'automatic',
+    // The app positions its own chrome against env(safe-area-inset-*), so iOS
+    // must not add insets of its own on top.
+    contentInset: 'never',
   },
 }
 

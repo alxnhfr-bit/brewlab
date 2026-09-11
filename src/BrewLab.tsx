@@ -104,7 +104,11 @@ export default function BrewLab() {
         style={{
           maxWidth: 440,
           margin: "0 auto",
-          minHeight: "100vh",
+          // The shell is the scroll container, so the bounce happens here and
+          // is contained, leaving the fixed tab bar and mini-bar untouched.
+          height: "100%",
+          overflowY: "auto",
+          overscrollBehaviorY: "contain",
           background: "var(--p-bg)",
           color: "var(--p-ink)",
           position: "relative",
@@ -114,6 +118,23 @@ export default function BrewLab() {
           <ThePour onDone={completeOnboarding} />
         ) : (
           <>
+            {/* Opaque backdrop for the status bar, so list content scrolling
+                up passes behind the clock rather than colliding with it. */}
+            <div
+              aria-hidden
+              style={{
+                position: "fixed",
+                top: 0,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "100%",
+                maxWidth: 440,
+                height: "env(safe-area-inset-top)",
+                background: "var(--p-bg)",
+                pointerEvents: "none",
+                zIndex: 150,
+              }}
+            />
             {tab === "brew" && <BrewTab />}
             {tab === "journal" && <JournalTab />}
             {tab === "library" && <LibraryTab />}

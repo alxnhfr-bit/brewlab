@@ -85,6 +85,14 @@ restarted the next step, so after a locked-phone brew the notifications said "Br
 app still showed an early step. `completedAt` is likewise the last step's scheduled end, so the logged
 duration is the real brew time rather than however long the phone stayed in a pocket.
 
+**Scrolling is owned by the shell, not the document** (fixed 2026-09-11). `html, body` are
+`height:100%; overflow:hidden; overscroll-behavior:none`, and the shell div in
+[src/BrewLab.tsx](src/BrewLab.tsx) is the scroll container. In a WKWebView a scrolling document
+rubber-bands past its end and drags `position:fixed` chrome with it, which lifted the tab bar off the
+bottom edge. The shell also paints an opaque `env(safe-area-inset-top)` strip so list content passes
+behind the status bar instead of colliding with the clock. `capacitor.config.ts` sets
+`ios.contentInset: 'never'` because the app handles safe areas itself.
+
 Two behaviours were added after the handoff, which does not specify either:
 - **Ending a running brew.** The session header's X used to minimize on tap and abandon the brew on a
   hidden 600ms long press, announced only through an aria-label, so ending a brew was undiscoverable
