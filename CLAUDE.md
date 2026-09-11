@@ -85,6 +85,13 @@ restarted the next step, so after a locked-phone brew the notifications said "Br
 app still showed an early step. `completedAt` is likewise the last step's scheduled end, so the logged
 duration is the real brew time rather than however long the phone stayed in a pocket.
 
+**Nav bar height** is driven by `--p-nav-pad-bottom` / `--p-nav-h` in
+[src/styles/tokens.css](src/styles/tokens.css), and `NowBrewingBar` positions itself from the same
+variables so the two can never drift. The handoff's 36px bottom padding ALREADY covers the home
+indicator, so `env(safe-area-inset-bottom)` must be `max()`'d with it, never added to it; adding it
+made the bar 34px too tall on an iPhone. Measured: 72px tall, flush to the bottom, mini-bar clearing
+it by 13px.
+
 **Scrolling is owned by the shell, not the document** (fixed 2026-09-11). `html, body` are
 `height:100%; overflow:hidden; overscroll-behavior:none`, and the shell div in
 [src/BrewLab.tsx](src/BrewLab.tsx) is the scroll container. In a WKWebView a scrolling document

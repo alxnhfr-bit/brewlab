@@ -21,6 +21,16 @@
   --p-diamond: polygon(50% 0,100% 50%,50% 100%,0 50%);
 }
 
+/* Nav bar metrics. The design's 36px bottom padding already covers the home
+   indicator, so env(safe-area-inset-bottom) must NOT be added on top of it,
+   only max()'d in case a device ever reports a deeper inset. */
+:root {
+  --p-nav-pad-bottom: max(36px, env(safe-area-inset-bottom));
+  /* 16 top + 14 label + 4 gap + 3 underline */
+  --p-nav-content: 37px;
+  --p-nav-h: calc(var(--p-nav-content) + var(--p-nav-pad-bottom));
+}
+
 @keyframes blink { 50% { opacity: 0 } }
 @keyframes spin { to { transform: rotate(360deg) } }
 

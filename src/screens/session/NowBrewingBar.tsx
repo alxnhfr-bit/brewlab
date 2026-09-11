@@ -48,7 +48,7 @@ export function NowBrewingBar() {
       }}
       style={{
         position: "fixed",
-        bottom: "calc(88px + env(safe-area-inset-bottom))",
+        bottom: "calc(var(--p-nav-h) + 12px)",
         left: "50%",
         transform: "translateX(-50%)",
         width: "calc(100% - 24px)",

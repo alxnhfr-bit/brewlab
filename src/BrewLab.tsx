@@ -53,7 +53,7 @@ function TabBar({ tab, onChange }: { tab: TabId; onChange: (t: TabId) => void })
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-start",
-        padding: "16px 28px calc(36px + env(safe-area-inset-bottom))",
+        padding: "16px 28px var(--p-nav-pad-bottom)",
         zIndex: 200,
       }}
     >
