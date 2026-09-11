@@ -182,6 +182,11 @@ zero `fetch`/XHR calls, zero external URLs, no analytics and no backend, fonts a
 bundled, and the only permissions are notifications and keep-awake. **If Supabase lands in v1.5, the
 policy must be rewritten before that build ships.**
 
+Store assets are drafted in [store/](store): `listing.md` (name, subtitle, promo text, keywords,
+description, category, age rating, privacy answers, review notes, all within Apple's character
+limits) and `screenshots-6.9/` (five captures at 1320x2868, the required 6.9 inch size, taken from
+the iPhone 17 Pro Max simulator with realistic seeded state).
+
 Still blocked on the developer, not on code:
 - **Xcode** (App Store, large download) plus `brew install cocoapods`, then `npx cap add ios`.
 - **Apple Developer Program** enrollment, 99 USD/year, which can take days to approve.
