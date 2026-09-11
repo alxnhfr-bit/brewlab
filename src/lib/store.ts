@@ -169,10 +169,25 @@ export const useBrewLab = create<BrewLabState>()(
       advanceStep: () => {
         const s = get().session
         if (!s || s.phase !== "running") return
+        // Chain from the step's scheduled end, never from "now". The phone is
+        // expected to be locked mid-brew, which suspends the WebView, so on
+        // resume several steps may be overdue at once. Chaining lets them
+        // cascade onto the same absolute schedule the notifications were
+        // pre-scheduled against; using Date.now() here would silently restart
+        // the next step and drift out of step with what the user was told.
+        const scheduledEnd = s.stepEndsAt ?? Date.now()
         const nextIndex = s.stepIndex + 1
         if (nextIndex >= s.plan.steps.length) {
           set({
-            session: { ...s, phase: "complete", stepEndsAt: null, minimized: false, completedAt: Date.now() },
+            session: {
+              ...s,
+              phase: "complete",
+              stepEndsAt: null,
+              minimized: false,
+              // The brew finished when the last step elapsed, not whenever the
+              // user happened to reopen the app.
+              completedAt: scheduledEnd,
+            },
           })
           return
         }
@@ -181,7 +196,7 @@ export const useBrewLab = create<BrewLabState>()(
           session: {
             ...s,
             stepIndex: nextIndex,
-            stepEndsAt: Date.now() + next.seconds * 1000,
+            stepEndsAt: scheduledEnd + next.seconds * 1000,
           },
         })
       },

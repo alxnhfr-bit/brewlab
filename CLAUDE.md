@@ -77,6 +77,14 @@ Design system (near-black ink, 2px rules, Archivo Black display type, sticker sh
   screen: palette cards each previewing their own palette, plus mode pills and a live hero preview),
   `onboarding/` (ThePour, CSS/SVG animated first run).
 
+**Background catch-up (important, fixed 2026-09-11).** `advanceStep` chains the next step from the
+current step's *scheduled* end, never from `Date.now()`. The phone is expected to be locked mid-brew,
+which suspends the WebView, so on resume several steps can be overdue at once and must cascade onto
+the same absolute schedule the notifications were pre-scheduled against. Using `Date.now()` silently
+restarted the next step, so after a locked-phone brew the notifications said "Brew complete" while the
+app still showed an early step. `completedAt` is likewise the last step's scheduled end, so the logged
+duration is the real brew time rather than however long the phone stayed in a pocket.
+
 Two behaviours were added after the handoff, which does not specify either:
 - **Ending a running brew.** The session header's X used to minimize on tap and abandon the brew on a
   hidden 600ms long press, announced only through an aria-label, so ending a brew was undiscoverable
@@ -117,7 +125,12 @@ Manager, so CocoaPods is installed but not actually used by this project.
 - **Splash**: `Splash.imageset` has light and dark variants wired through asset-catalog
   `appearances`, so a dark-mode phone does not flash cream at launch.
 Verified running on the iPhone 17 Pro simulator: clean first run shows The Pour, the Brew tab renders
-correctly, and the app follows the system light/dark appearance live.
+correctly, the app follows the system light/dark appearance live, and the icon renders correctly on the
+home screen (iOS rounds it, no double-rounding).
+**The background-timer architecture is proven on device.** With the app backgrounded for a whole brew,
+every step notification fired on time with the right pour target (Pause to 150g, Second pour to 250g,
+Drawdown to 250g, then "Brew complete"), and reopening the app landed on Brew Complete showing the true
+3:00 duration, with the journal entry timestamped at the brew's real start.
 
 `npx cap add android` is NOT run yet (no Android Studio on this machine).
 
