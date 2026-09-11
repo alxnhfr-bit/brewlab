@@ -1,11 +1,9 @@
 import type { CSSProperties, ReactNode } from "react"
-import { APP_NAME, APP_STRAPLINE, PRIVACY_URL, SUPPORT_URL } from "../../lib/brand"
+import { APP_NAME, APP_STRAPLINE, APP_VERSION, FEEDBACK_URL, PRIVACY_URL, SUPPORT_URL } from "../../lib/brand"
 import { useBrewLab } from "../../lib/store"
 import { haptics } from "../../lib/haptics"
 import { Sheet, Toggle } from "../../ui/primitives"
 import { CaretRight, LogoMark } from "../../ui/icons"
-
-const APP_VERSION = "0.1.0"
 
 const ROW: CSSProperties = {
   width: "100%",
@@ -117,6 +115,7 @@ export function SettingsSheet({ open, onClose, onAppearance }: SettingsSheetProp
           </RowValue>
         </button>
 
+        <LinkRow label="Send feedback" href={FEEDBACK_URL} />
         <LinkRow label="Privacy policy" href={PRIVACY_URL} />
         <LinkRow label="Support" href={SUPPORT_URL} />
 

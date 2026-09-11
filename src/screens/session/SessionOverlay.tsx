@@ -5,6 +5,7 @@ import { coachFor, TASTE_OPTIONS, toggleTaste } from "../../lib/coaching"
 import { fmt } from "../../lib/format"
 import { useNow } from "../../lib/useNow"
 import { haptics } from "../../lib/haptics"
+import { maybeAskForReview } from "../../lib/review"
 import type { ActiveSession, SessionStep, TasteTag } from "../../lib/types"
 import { Chip, DISPLAY, Label, OutlinePill, PrimaryPill, RoundBtn } from "../../ui/primitives"
 import { Burst, CaretDown, CaretUp, Check, RatingBurst, SkipBack, SkipForward, X } from "../../ui/icons"
@@ -718,13 +719,16 @@ function CompleteView({ session }: { session: ActiveSession }) {
           minHeight={60}
           fontSize={18}
           style={{ textTransform: "uppercase" }}
-          onClick={() =>
+          onClick={() => {
+            const given = rating > 0 ? rating : undefined
             finalizeSession({
-              rating: rating > 0 ? rating : undefined,
+              rating: given,
               tastes: tastes.length > 0 ? tastes : undefined,
               saveTweak: coaching ? saveTweak : undefined,
             })
-          }
+            // After the entry is written, so the brew counts toward the total.
+            maybeAskForReview(given)
+          }}
         >
           Done
         </PrimaryPill>

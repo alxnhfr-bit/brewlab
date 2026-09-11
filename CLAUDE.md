@@ -3,7 +3,7 @@
 Coffee brewing companion app: guided recipes, brew ratio calculator, brew journal.
 
 **Naming:** `brewlab` is the repo codename only, and stays in the repo name, the bundle id
-(`com.alxnhfr.brewlab`) and the persisted store key (`brewlab-store`). The public name in the UI is
+(`com.alxnhfr.fifteengrams`) and the persisted store key (`brewlab-store`). The public name in the UI is
 **15GRMS** ("fifteen grams"), held in [src/lib/brand.ts](src/lib/brand.ts) as `APP_NAME` plus
 `WORDMARK_TOP` / `WORDMARK_BOTTOM` (the two-line burst lockup, "15" over "GRMS"). Chosen 2026-09-10
 after Pourfect was found blocked; see Open decisions for the clearance trail. The app icon is
@@ -117,7 +117,8 @@ persisting to the next brew, journal auto-log, and reload persistence. No consol
 yet (Supabase lands in v1.5). `npm run dev` / `npm run build` / `npm run cap:sync`.
 
 Capacitor integration (JS side) is done: [capacitor.config.ts](capacitor.config.ts) (appId
-`com.alxnhfr.brewlab`, changeable until first store submission), haptics via @capacitor/haptics
+**`com.alxnhfr.fifteengrams`**, chosen 2026-09-11 and PERMANENT from first submission; spelled out
+rather than `15grms` because an Android package component may not begin with a digit), haptics via @capacitor/haptics
 with web Vibration fallback, [src/lib/native.ts](src/lib/native.ts) pre-schedules local
 notifications at every remaining step boundary and completion (the load-bearing background-timer
 architecture) and holds keep-awake during sessions; all no-ops on web. Fonts (Archivo, Archivo Black)
@@ -148,6 +149,21 @@ Drawdown to 250g, then "Brew complete"), and reopening the app landed on Brew Co
 3:00 duration, with the journal entry timestamped at the brew's real start.
 
 `npx cap add android` is NOT run yet (no Android Studio on this machine).
+
+## Feedback and analytics (decided 2026-09-11)
+
+- **Feedback**: a "Send feedback" row in Settings opens `FEEDBACK_URL` from
+  [src/lib/brand.ts](src/lib/brand.ts), currently the repo issue tracker. Swapping in a hosted form
+  (Tally, Formspree) is a one-line change and needs no other edits. No personal email is published.
+- **App Store review prompt**: [src/lib/review.ts](src/lib/review.ts) asks once per install, and only
+  after a brew the user both completed and rated 4+, with at least 5 completed brews behind them. It
+  is deliberately never triggered after a poor rating or an abandoned brew: Apple allows only three
+  prompts a year, and asking right after a bitter cup is how you collect one-star reviews.
+- **Analytics: none in v1, on purpose.** The app makes zero network calls, so "Data Not Collected" is
+  true and verifiable, which keeps review simple and is a selling point in this category. App Store
+  Connect already supplies downloads, sessions, retention and crashes with no SDK. If in-app analytics
+  is ever wanted, use a privacy-first one (TelemetryDeck, Aptabase) in v1.5 alongside Supabase, when
+  the privacy policy has to be rewritten anyway.
 
 ## App Store submission checklist
 

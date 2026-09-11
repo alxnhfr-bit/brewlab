@@ -28,6 +28,8 @@ export interface FinalizeInput {
 
 interface BrewLabState {
   hasOnboarded: boolean
+  /** The App Store review prompt is offered once in the app's lifetime. */
+  hasAskedForReview: boolean
   preferredMethod: BrewMethodId | null
   settings: Settings
   journal: JournalEntry[]
@@ -37,6 +39,7 @@ interface BrewLabState {
   session: ActiveSession | null
 
   completeOnboarding: (method: BrewMethodId | null) => void
+  markAskedForReview: () => void
   setTheme: (theme: ThemeSetting) => void
   setPalette: (palette: PaletteId) => void
   setSetting: (key: "haptics" | "sound", value: boolean) => void
@@ -63,6 +66,7 @@ export const useBrewLab = create<BrewLabState>()(
   persist(
     (set, get) => ({
       hasOnboarded: false,
+      hasAskedForReview: false,
       preferredMethod: null,
       settings: { theme: "system", palette: "pink", haptics: true, sound: true },
       journal: [],
@@ -72,6 +76,8 @@ export const useBrewLab = create<BrewLabState>()(
       session: null,
 
       completeOnboarding: (method) => set({ hasOnboarded: true, preferredMethod: method }),
+
+      markAskedForReview: () => set({ hasAskedForReview: true }),
 
       setTheme: (theme) => set((s) => ({ settings: { ...s.settings, theme } })),
 

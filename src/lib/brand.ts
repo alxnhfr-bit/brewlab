@@ -15,6 +15,9 @@ export const APP_NAME = "15GRMS"
 export const WORDMARK_TOP = "15"
 export const WORDMARK_BOTTOM = "GRMS"
 
+/** Keep in step with MARKETING_VERSION in the Xcode project. */
+export const APP_VERSION = "1.0.0"
+
 export const APP_TAGLINE = "Your coffee, step by step."
 
 /** Used in the settings footer. */
@@ -28,3 +31,10 @@ export const APP_STRAPLINE = "Pour it right, every time"
  */
 export const PRIVACY_URL = "https://alxnhfr-bit.github.io/brewlab/privacy.html"
 export const SUPPORT_URL = "https://alxnhfr-bit.github.io/brewlab/support.html"
+
+/**
+ * Where "Send feedback" points. Currently the repo's issue tracker, which
+ * works today and exposes no personal address. Swap this one line for a
+ * hosted form (Tally, Formspree) when one exists; nothing else changes.
+ */
+export const FEEDBACK_URL = "https://github.com/alxnhfr-bit/brewlab/issues/new"

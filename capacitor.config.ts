@@ -1,9 +1,10 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
-// appId is changeable until the first store submission; after that it is
-// permanent on both stores. Derived from the personal GitHub handle for now.
+// appId is PERMANENT from the first store submission onward. "fifteengrams"
+// rather than "15grms" because an Android package component may not start with
+// a digit, which would otherwise force a different id on that platform.
 const config: CapacitorConfig = {
-  appId: 'com.alxnhfr.brewlab',
+  appId: 'com.alxnhfr.fifteengrams',
   appName: '15GRMS',
   webDir: 'dist',
   plugins: {
