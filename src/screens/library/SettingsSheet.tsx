@@ -1,4 +1,7 @@
 import type { CSSProperties, ReactNode } from "react"
+import { Capacitor } from "@capacitor/core"
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem"
+import { Share } from "@capacitor/share"
 import { APP_NAME, APP_STRAPLINE, APP_VERSION, FEEDBACK_URL, PRIVACY_URL, SUPPORT_URL } from "../../lib/brand"
 import { useBrewLab } from "../../lib/store"
 import { haptics } from "../../lib/haptics"
@@ -68,19 +71,54 @@ function LinkRow({ label, href }: { label: string; href: string }) {
   )
 }
 
-function exportJournal(): void {
-  const journal = useBrewLab.getState().journal
-  const blob = new Blob([JSON.stringify(journal, null, 2)], { type: "application/json" })
-  const url = URL.createObjectURL(blob)
+/**
+ * The persist key stays "brewlab-store" (renaming it would orphan existing
+ * data), but this filename is the one the user actually sees in Files.
+ */
+const EXPORT_FILENAME = "15grms-journal.json"
+
+/**
+ * Hand the journal to the system share sheet, so it can be saved to Files,
+ * mailed or AirDropped.
+ *
+ * This cannot be the web path. A synthetic `<a download>` click does nothing at
+ * all in a WKWebView: Capacitor's iOS runtime implements no WKDownloadDelegate
+ * and no download decision handler, so the tap was silently inert on device
+ * while working fine in the browser where it was tested. That made a row in
+ * Settings and a sentence in the store description both untrue.
+ */
+async function shareJournalNative(json: string): Promise<void> {
+  const { uri } = await Filesystem.writeFile({
+    path: EXPORT_FILENAME,
+    data: json,
+    // Cache, not Documents: this is a handoff to the share sheet, not a file
+    // the app is keeping. iOS may reclaim it, which is the correct lifetime.
+    directory: Directory.Cache,
+    encoding: Encoding.UTF8,
+  })
+  await Share.share({ title: "15GRMS journal", url: uri })
+}
+
+/** Web fallback: a real download, which is what browsers actually support. */
+function downloadJournalWeb(json: string): void {
+  const url = URL.createObjectURL(new Blob([json], { type: "application/json" }))
   const a = document.createElement("a")
   a.href = url
-  // The persist key stays "brewlab-store" (renaming it would orphan existing
-  // data), but this filename is the one the user actually sees in Files.
-  a.download = "15grms-journal.json"
+  a.download = EXPORT_FILENAME
   document.body.appendChild(a)
   a.click()
   a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+function exportJournal(): void {
+  const json = JSON.stringify(useBrewLab.getState().journal, null, 2)
+  if (!Capacitor.isNativePlatform()) {
+    downloadJournalWeb(json)
+    return
+  }
+  // Dismissing the share sheet rejects, which is a normal outcome, not an error.
+  void shareJournalNative(json).catch(() => {})
 }
 
 export interface SettingsSheetProps {

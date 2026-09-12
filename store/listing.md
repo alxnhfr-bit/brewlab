@@ -113,10 +113,29 @@ First release.
 - Primary: **Food & Drink**
 - Secondary: **Lifestyle**
 
-## Age Rating
+## App Information (record level: answered once, not per version)
 
-**4+**. No objectionable content, no user-generated content, no web browsing, no
-ads, no data collection.
+These are the answers, not the outcome. Several are effectively frozen after the
+first submission, so they are written down rather than improvised at the form.
+
+| Field | Answer | Why |
+| --- | --- | --- |
+| Age rating outcome | **4+** | Falls out of the answers below |
+| Alcohol, tobacco or drug references | None | Caffeine does not count; do not overthink this into 13+ |
+| Unrestricted web access | **No** | The three Settings links are `target="_blank"` handoffs to Safari, not an embedded browser. Revisit if an in-app webview is ever added |
+| User-generated content | **No** | Journal text is device-local, never shared, no feed, no other users |
+| Social media capabilities | **No** | Required to answer since September 2026. Yes would attach a Social Media descriptor and push toward 13+ |
+| Content rights: third-party content | **No** | No ads, no analytics SDK, no fetched content. Archivo and Archivo Black are OFL. A brewing method is an unprotectable process; the prose is original |
+| Copyright | `2026 Alexander Neuhofer` | |
+| Primary language | English (U.S.) | |
+| Price | Free, worldwide | |
+| In-app purchases | None | |
+| IDFA / advertising identifier | **No** | Nothing in the app touches it |
+| Release option | **Manual** for a first release | So you choose the moment it goes live rather than it appearing the instant review passes |
+| Mac / Apple Vision Pro availability | **Off** | These toggles can default ON and would put an untested iPhone-only build on two more platforms |
+
+Read the region-specific ratings App Store Connect computes rather than assuming
+4+ applies everywhere.
 
 ## URLs
 
@@ -137,7 +156,30 @@ notifications (local, scheduled on device) and keep-awake during a brew.
 ## Screenshots
 
 `store/screenshots-6.9/` holds five 1320 x 2868 captures, which is the required
-6.9 inch size. Suggested order and captions, if captions are added later:
+6.9 inch size. An iPhone-only binary needs this one size set; Apple downscales
+for smaller devices. 1 to 10 per size, and the Media Manager panel is the
+authority if it ever disagrees with this file.
+
+**Two of the five are stale as of 2026-09-12 and must be recaptured before
+upload.** They predate the attribution and recipe-name changes:
+- `01-brew-home.png`: shows bare bylines ("James Hoffmann · light roast"). The
+  app now renders "After James Hoffmann · light roast". Three of the four visible
+  rows are wrong.
+- `05-journal.png`: the top row reads "COMPETITION WINNER", a recipe name that no
+  longer exists anywhere in the build. It is now "Championship Style". This is
+  the worse of the two: a store screenshot advertising content the app does not
+  contain.
+- `02-session.png`, `03-complete.png` and `06-appearance.png` are unaffected.
+
+When recapturing, re-encode to RGB. All five are currently RGBA (fully opaque,
+but with an alpha channel). Alpha is a hard rejection for the app icon; whether
+it is enforced on screenshots is unconfirmed, and flattening costs nothing.
+
+**Paste the description and promo text unwrapped.** This file is hard-wrapped at
+about 80 columns and those newlines survive a copy-paste as mid-sentence line
+breaks in the listing.
+
+Suggested order and captions, if captions are added later:
 
 1. `01-brew-home` - "Your last brew, one tap away"
 2. `02-session` - "Pour to the gram, step by step"
@@ -158,4 +200,8 @@ two to four minutes with the screen held awake, so they never ask. To see the
 prompt, start Overnight Concentrate from the Library or the cold brew filter.
 Notifications are local only, scheduled on device to alert each brewing step; the
 app makes no network requests of any kind.
+
+The recipes are widely published manual brewing methods, credited to the people
+who originated them ("After James Hoffmann", and so on). No affiliation with or
+endorsement by any of them is claimed or implied.
 ```

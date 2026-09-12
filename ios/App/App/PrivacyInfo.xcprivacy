@@ -6,15 +6,25 @@
 	  The machine readable form of the "Data Not Collected" answer given in App
 	  Store Connect. Every array is deliberately empty:
 
-	  NSPrivacyAccessedAPITypes is empty because the app uses no required reason
-	  API. The journal persists through WebKit localStorage inside the WKWebView,
-	  not NSUserDefaults, and none of the seven Capacitor plugins reaches for file
-	  timestamps, boot time, disk space or the active keyboard. @capacitor/preferences,
-	  the plugin that would force an NSPrivacyAccessedAPICategoryUserDefaults entry
-	  with reason CA92.1, is deliberately not a dependency.
+	  NSPrivacyCollectedDataTypes is empty because nothing is collected: the app
+	  makes no network requests, so there is nowhere for data to go. The journal
+	  persists through WebKit localStorage inside the WKWebView, not NSUserDefaults,
+	  and @capacitor/preferences, the plugin that would force an
+	  NSPrivacyAccessedAPICategoryUserDefaults entry with reason CA92.1, is
+	  deliberately not a dependency.
+
+	  The one declared API is file timestamps, brought in by @capacitor/filesystem,
+	  which the journal export uses to write a file for the share sheet. Its
+	  IONFileStructures+Converters.swift reads creation and modification dates when
+	  it reports file attributes. The API is compiled into the binary whether or not
+	  the app calls stat(), so it is declared. C617.1 is the reason for files inside
+	  the app's own container, which is the only place this app ever writes.
+	  Required reason APIs are orthogonal to data collection: declaring this does
+	  not change the "Data Not Collected" answer.
 
 	  Capacitor and Cordova ship their own manifests inside their frameworks, so
-	  this file covers the app target only.
+	  this file covers the app target only. @capacitor/share and
+	  @capacitor/filesystem ship none, which is why their usage lands here.
 
 	  When Supabase lands in v1.5 this file, privacy.html and the App Store Connect
 	  answers all have to be rewritten together.
@@ -26,6 +36,15 @@
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array/>
 	<key>NSPrivacyAccessedAPITypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
