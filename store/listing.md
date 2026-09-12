@@ -15,14 +15,30 @@ so nothing gets silently truncated.
 ## Subtitle (30 max)
 
 ```
-Pour-over timer and journal
+Coffee brew timer and journal
 ```
-*27 chars. Carries the search weight the coined name cannot: "pour over", "timer",
-"journal" are the terms people actually type.*
+*29 chars. Carries the search weight the coined name cannot, since "15GRMS" signals
+nothing about coffee on its own.*
+
+Why not "pour-over": only the V60 recipes are pour-over. AeroPress is immersion plus
+pressure and cold brew is immersion, so "pour-over" undersells two of the three
+methods. The accurate umbrella is **manual brewing** (also "hand brewing", or
+"filter coffee" in the UK and EU), but nobody searches those, so the subtitle uses
+the plain words people type and the keywords field carries the method names.
+
+Why not "home brew": on the App Store "homebrew" means BEER. A search returns
+Brewfather, Brewer's Friend, BeerSmith, BrewBuddy and Beer Lab, with no coffee apps
+at all. It would aim the listing at the wrong audience and compete with established
+beer software.
+
+This wording also matches how the category names itself: "Brew Timer - Coffee
+Recipes", "PixelCafe - Coffee Brew Timer", "BrewPrint: Coffee Brew Timer",
+"Coffee Book: Brew Journal".
 
 Alternates:
-- `Guided brew timer for coffee` (28)
-- `Coffee brew timer and log` (25)
+- `Coffee timer and brew journal` (29)
+- `Brew timer for better coffee` (28)
+- `V60, AeroPress and cold brew` (28, method-led rather than function-led)
 
 ## Promotional Text (170 max, editable without review)
 
