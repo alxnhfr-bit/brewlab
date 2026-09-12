@@ -74,7 +74,9 @@ function exportJournal(): void {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
-  a.download = "brewlab-journal.json"
+  // The persist key stays "brewlab-store" (renaming it would orphan existing
+  // data), but this filename is the one the user actually sees in Files.
+  a.download = "15grms-journal.json"
   document.body.appendChild(a)
   a.click()
   a.remove()
