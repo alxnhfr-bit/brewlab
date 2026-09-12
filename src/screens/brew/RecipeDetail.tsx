@@ -15,7 +15,7 @@ import {
 } from "../../ui/primitives"
 import { ArrowCounterClockwise, CaretDown, CaretLeft, Dot, Heart, MethodSticker } from "../../ui/icons"
 import { DialInSheet } from "./DialInSheet"
-import { methodCode, ratioLabel, tempLabel, tweakLabel, useRecipePlan } from "./shared"
+import { methodCode, ratioLabel, recipeCredit, tempLabel, tweakLabel, useRecipePlan } from "./shared"
 
 /** Numbers in the spec grid never reflow when a dial-in changes them. */
 function Num({ children }: { children: string }) {
@@ -57,7 +57,7 @@ export function RecipeDetail({ recipe, onBack }: { recipe: Recipe; onBack: () =>
             color: "var(--p-muted)",
           }}
         >
-          {methodCode(recipe.method)} · {recipe.author} · {recipe.roast} roast
+          {methodCode(recipe.method)} · {recipeCredit(recipe)} · {recipe.roast} roast
         </div>
         <RoundBtn
           size={40}

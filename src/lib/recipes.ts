@@ -90,13 +90,16 @@ const BASE_RECIPES: Recipe[] = [
   {
     id: "aeropress-wac24",
     method: "aeropress",
-    name: "Competition Winner",
-    author: "WAC 2024",
+    // Named for the style, not for a competition. "WAC 2024" claimed a tie to
+    // the World AeroPress Championship that we cannot source and did not have
+    // permission to invoke. The id is left alone; it is internal and persisted.
+    name: "Championship Style",
+    author: "Community",
     roast: "light",
     doseG: 14,
     waterG: 200,
     tempC: 92,
-    whyLine: "A championship recipe tuned for clarity and sweetness in light roasts.",
+    whyLine: "A competition style recipe tuned for clarity and sweetness in light roasts.",
     steps: [
       { label: "Prep", detail: "Standard position. Wet filter.", seconds: 10, why: "Rinsing the filter removes paper taste." },
       { label: "Pour", detail: "All 200g at once.", seconds: 10, waterTargetG: 200 },

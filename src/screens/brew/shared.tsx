@@ -32,9 +32,26 @@ export function doseWaterLabel(doseG: number, waterG: number): string {
   return `${doseG} : ${waterG}`
 }
 
-/** "James Hoffmann · light roast". */
+/**
+ * Authors that name no individual, so an "After" prefix would read oddly.
+ */
+const UNATTRIBUTED = new Set(["Community"])
+
+/**
+ * "After James Hoffmann", or plain "Community".
+ *
+ * These are published methods reproduced with attribution, not recipes their
+ * authors contributed. A bare byline reads as "by", which is an endorsement
+ * claim nobody granted; "After" says what this actually is. Every surface that
+ * shows an author goes through here so the two cannot drift.
+ */
+export function recipeCredit(recipe: Recipe): string {
+  return UNATTRIBUTED.has(recipe.author) ? recipe.author : `After ${recipe.author}`
+}
+
+/** "After James Hoffmann · light roast". */
 export function recipeSubtitle(recipe: Recipe): string {
-  return `${recipe.author} · ${recipe.roast} roast`
+  return `${recipeCredit(recipe)} · ${recipe.roast} roast`
 }
 
 /** "grind coarser · rated bitter". Uppercased by the pill it sits in. */
