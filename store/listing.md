@@ -69,9 +69,10 @@ ONE TAP TO BREWING
 Your last brew waits on the home screen with the dose you used. Tap Start and you
 are pouring in about five seconds.
 
-IT KEEPS TIME WITH THE SCREEN OFF
-Lock your phone, put it down, get on with it. Every step alerts you, right through
-to the last drop, and the brew is still correct when you come back.
+IT KEEPS TIME WITHOUT YOU
+The timer runs against the clock rather than against the app, so locking your phone
+or switching away never breaks a brew. It is still correct when you come back. Set
+a cold brew going and 15GRMS tells you when it is ready, ten hours later.
 
 TWELVE RECIPES, PROPERLY SOURCED
 The Hoffmann Method, Tetsu Kasuya's 4:6, Matt Winton's five pour, the Adler original
@@ -148,7 +149,13 @@ notifications (local, scheduled on device) and keep-awake during a brew.
 
 ```
 15GRMS is fully offline and requires no account. To see the main flow: pick a
-brewer on first launch, then tap Start brew on the home screen. Notifications are
-requested at that point and are used only to alert each brewing step locally; the
-app makes no network requests.
+brewer on first launch, then tap Start brew on the home screen.
+
+Notification permission is requested only when a brew is long enough to need it,
+which means the two cold brew recipes (Overnight Concentrate, Room Temp Batch)
+that steep for ten to twelve hours. The short pour-over and AeroPress brews run
+two to four minutes with the screen held awake, so they never ask. To see the
+prompt, start Overnight Concentrate from the Library or the cold brew filter.
+Notifications are local only, scheduled on device to alert each brewing step; the
+app makes no network requests of any kind.
 ```

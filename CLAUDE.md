@@ -121,7 +121,29 @@ Capacitor integration (JS side) is done: [capacitor.config.ts](capacitor.config.
 rather than `15grms` because an Android package component may not begin with a digit), haptics via @capacitor/haptics
 with web Vibration fallback, [src/lib/native.ts](src/lib/native.ts) pre-schedules local
 notifications at every remaining step boundary and completion (the load-bearing background-timer
-architecture) and holds keep-awake during sessions; all no-ops on web. Fonts (Archivo, Archivo Black)
+architecture) and holds keep-awake; all no-ops on web.
+
+**Notifications are asked for by need, not by default (decided 2026-09-12).** The recipe library
+splits hard: ten of the twelve brews finish inside four minutes with no step over two, and the two
+cold brews are a single steep of 10h and 12h. So `UNATTENDED_STEP_MS` (5 min) in
+[src/lib/native.ts](src/lib/native.ts) is really the line between "standing at the counter holding a
+kettle" and "asleep", and it has enormous margin either side (longest short step 120s, shortest long
+step 36000s). Two consequences:
+- The permission dialog only fires for a brew that contains an unattended step, i.e. cold brew.
+  It used to fire on every user's first brew, which for a 3 minute V60 interrupts to solve a problem
+  they do not have: the screen is held awake and they are watching the pour target anyway. iOS grants
+  exactly one prompt, so spending it where the answer is most likely "no" is how you end up unable to
+  alert the people who actually need it. Note the asymmetry: we only PROMPT on a long brew, but once
+  permission exists we schedule for every brew, so granting it for cold brew still covers a
+  backgrounded pour-over.
+- Keep-awake now keys off the CURRENT step's length, not "a session exists". The old version pinned
+  the display on for the full 12 hour steep. iOS drops the idle timer once the app backgrounds, so it
+  only bit someone who set the phone down without locking it, but that is a flat battery by morning
+  and there is no reading where it is correct. The notification covers that stretch instead.
+
+The store listing was corrected to match: the old headline claimed "every step alerts you", which is
+false for a pour-over-only user who is now never asked. The wall-clock correctness claim is unchanged
+because it is true regardless of notification permission. Fonts (Archivo, Archivo Black)
 are bundled locally via @fontsource, so there is no Google Fonts link anywhere; index.html carries a
 self-contained inline-styled 15GRMS splash that doubles as the GitHub Pages placeholder (its hex
 values are deliberate, the token stylesheet ships inside the bundle). Brand assets live in
