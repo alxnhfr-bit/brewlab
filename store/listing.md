@@ -74,10 +74,10 @@ The timer runs against the clock rather than against the app, so locking your ph
 or switching away never breaks a brew. It is still correct when you come back. Set
 a cold brew going and 15GRMS tells you when it is ready, ten hours later.
 
-TWELVE RECIPES, PROPERLY SOURCED
-The Hoffmann Method, Tetsu Kasuya's 4:6, Matt Winton's five pour, the Adler original
-AeroPress, overnight cold brew and more. Each step shows the pour target and the
-reason behind it.
+TWELVE RECIPES, CREDITED
+The Hoffmann Method, 4:6 Method, Winton Five Pour, The Adler Original, Overnight
+Concentrate and more, credited to the people who developed them. Each pour shows
+its target on the scale, with the reasoning behind the steps that matter.
 
 DIAL IN YOUR DOSE
 Change the dose, ratio or temperature and every pour target recalculates as you
@@ -134,6 +134,12 @@ first submission, so they are written down rather than improvised at the form.
 | Release option | **Manual** for a first release | So you choose the moment it goes live rather than it appearing the instant review passes |
 | Mac / Apple Vision Pro availability | **Off** | These toggles can default ON and would put an untested iPhone-only build on two more platforms |
 | EU trader status (DSA) | **Non-trader** | Free app, no IAP, no ads, no revenue, no intent to commercialise, which matches Apple's own "hobbyist" example. Publishes nothing; EU customers see a consumer-rights notice. **Must be re-declared as trader if a paid unlock is ever added.** Business > Agreements > Compliance |
+| SKU | `15grms-ios` | Arbitrary, permanent, never shown to users |
+| Tax category | App Store Software (B2) | Required even at price zero |
+| EULA | Apple's standard | No custom terms needed |
+| Sign-in required | **No** | There is no account |
+| App Review contact | Alex's own name, phone and email | Reviewer-only, never published. Note there is no support email anywhere else in the project since support moved to a form, so this is the one place a personal address is correct |
+| Version string | `1.0.0` | Must match `CFBundleShortVersionString` in the archive |
 
 Read the region-specific ratings App Store Connect computes rather than assuming
 4+ applies everywhere.
@@ -207,10 +213,15 @@ Suggested order and captions, if captions are added later:
 brewer on first launch, then tap Start brew on the home screen.
 
 Notification permission is requested only when a brew is long enough to need it,
-which means the two cold brew recipes (Overnight Concentrate, Room Temp Batch)
-that steep for ten to twelve hours. The short pour-over and AeroPress brews run
-two to four minutes with the screen held awake, so they never ask. To see the
-prompt, start Overnight Concentrate from the Library or the cold brew filter.
+which means the two recipes that steep for ten to twelve hours: Overnight
+Concentrate and Room Temp Batch. Every other brew runs one to four minutes with
+the screen held awake, so it never asks.
+
+To see the prompt: on the Brew tab, tap the COLD filter chip, then choose
+Overnight Concentrate or Room Temp Batch and start it. Japanese Flash Brew is also
+listed under COLD but is brewed hot over ice and finishes in under three minutes,
+so it correctly does not ask.
+
 Notifications are local only, scheduled on device to alert each brewing step; the
 app makes no network requests of any kind.
 
