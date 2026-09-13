@@ -263,12 +263,34 @@ description, category, age rating, privacy answers, review notes, all within App
 limits) and `screenshots-6.9/` (five captures at 1320x2868, the required 6.9 inch size, taken from
 the iPhone 17 Pro Max simulator with realistic seeded state).
 
+**EU trader status: declared NON-TRADER (decided 2026-09-12). This is coupled to pricing, see below.**
+Apple requires every developer to declare trader status under DSA Articles 30/31 before an app can be
+submitted, whether or not it ships to the EU. The two outcomes are not symmetric:
+- **Trader** publishes address, phone and email on the App Store product page across all 27 EU
+  territories, after an Apple verification that takes roughly 1 to 7 days and gates submission. An
+  individual may give a P.O. Box rather than a residence, with a bill or receipt proving association.
+- **Non-trader** publishes nothing. EU customers see a notice that consumer protection rights do not
+  apply to contracts with the developer, which for a free app with no purchase and no contract has
+  essentially no practical effect.
+
+The Feb 2025 removals that circulate as "non-traders get delisted" were apps that had declared
+**nothing at all**, not apps declared non-trader. That distinction is what makes non-trader viable.
+Apple's own test: unlikely to be a trader if acting "for purposes which are outside your trade,
+business, craft, or profession", with the worked example "a hobbyist who developed an app with no
+intention of commercializing it". That is 15GRMS today: free, no IAP, no ads, no account, no revenue.
+
+**The coupling: charging money makes you a trader, unambiguously.** If the open pricing decision below
+lands on a paid unlock, the status must be re-declared as trader BEFORE that version ships, and the
+address question comes back with it. Do not ship a paid build without revisiting this.
+The honest counterargument on record: CLAUDE.md positions this app as a portfolio credibility piece,
+and a career asset is arguably a professional purpose even at zero revenue. Intent to commercialise
+is the operative test and there is none today. Not legal advice; the German Gewerbe/Steuerberater
+angle is the developer's call.
+
 Still blocked on the developer, not on code:
-- **Xcode** (App Store, large download) plus `brew install cocoapods`, then `npx cap add ios`.
-- **Apple Developer Program** enrollment, 99 USD/year, which can take days to approve.
 - App Store Connect's App Privacy questionnaire, which should be answered "Data Not Collected".
-- Support contact currently points at GitHub issues rather than an email address, to avoid publishing
-  a personal address. Swap it in `support.html` and `privacy.html` if a support mailbox is preferred.
+- Entering the non-trader declaration itself: App Store Connect > Business > Agreements > Compliance >
+  Complete Compliance Requirements, next to Digital Services Act. Account Holder role required.
 
 ## What NOT to do
 
@@ -295,6 +317,10 @@ Still blocked on the developer, not on code:
 ## Open decisions
 
 - Pricing/monetization (research suggests free or cheap one-time unlock; subscriptions rejected).
+  **Blocked on this: the EU trader declaration above.** v1 ships free and non-trader. A paid unlock
+  makes the developer a trader under the DSA, which means re-declaring and publishing a contact
+  address (a P.O. Box is permitted) before that build ships. Price the compliance work into the
+  decision, not just the revenue.
 - **Public app name (BrewLab is blocked, rename required).** Checked 2026-07-15: an exact-name
   "BrewLab" coffee app exists and is actively updated on iOS (Apple requires unique display names,
   so the bare name is unavailable), two more BrewLab-named coffee apps crowd iOS, Android has a live

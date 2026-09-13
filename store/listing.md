@@ -133,6 +133,7 @@ first submission, so they are written down rather than improvised at the form.
 | IDFA / advertising identifier | **No** | Nothing in the app touches it |
 | Release option | **Manual** for a first release | So you choose the moment it goes live rather than it appearing the instant review passes |
 | Mac / Apple Vision Pro availability | **Off** | These toggles can default ON and would put an untested iPhone-only build on two more platforms |
+| EU trader status (DSA) | **Non-trader** | Free app, no IAP, no ads, no revenue, no intent to commercialise, which matches Apple's own "hobbyist" example. Publishes nothing; EU customers see a consumer-rights notice. **Must be re-declared as trader if a paid unlock is ever added.** Business > Agreements > Compliance |
 
 Read the region-specific ratings App Store Connect computes rather than assuming
 4+ applies everywhere.
