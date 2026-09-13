@@ -99,8 +99,8 @@ No account. No sign-up. No analytics. No ads. 15GRMS makes no network requests a
 all, so everything you record stays on your phone, and it works perfectly with no
 signal. Export your journal as JSON whenever you like.
 ```
-*Roughly 1,500 characters. The first two paragraphs matter most: Apple only shows
-about three lines before "more".*
+*1,757 characters unwrapped, against a 4,000 limit. The first two paragraphs matter
+most: Apple only shows about three lines before "more".*
 
 ## What's New (first release)
 
@@ -157,8 +157,13 @@ Read the region-specific ratings App Store Connect computes rather than assuming
 Answer **Data Not Collected**.
 
 This is verifiable, not a convenience: `src/` contains no fetch or XHR calls, no
-analytics SDK, no third-party services, and no backend. The only permissions are
-notifications (local, scheduled on device) and keep-awake during a brew.
+analytics SDK and no backend. The only permissions are notifications (local,
+scheduled on device) and keep-awake during a brew.
+
+The one third party anywhere near the product is the Tally feedback form, and it
+does not change this answer: the app never calls it. Settings renders a link that
+hands the URL to Safari, so the app is not party to the request and learns nothing
+about it. privacy.html names Tally explicitly for the same reason.
 
 ## Screenshots
 

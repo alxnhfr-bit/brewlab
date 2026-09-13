@@ -275,6 +275,22 @@ simulator could not settle now has an answer, on an iPhone running iOS 26.5:
   is ever wanted, use a privacy-first one (TelemetryDeck, Aptabase) in v1.5 alongside Supabase, when
   the privacy policy has to be rewritten anyway.
 
+## Submitted for review 2026-09-13
+
+**15GRMS 1.0.0 (build 1) is submitted to App Store review, set to release automatically on
+approval.** App record Apple ID `6811369525`, SKU `15grms-ios-001`, Food & Drink + Lifestyle, 4+,
+free worldwide, iPhone only, EU trader status non-trader, App Privacy "Data Not Collected".
+
+If it is rejected, decide first whether the fix is metadata or binary, because that decision is
+expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
+answers) is free to change and the SAME build can be resubmitted. Anything in the binary needs
+`CURRENT_PROJECT_VERSION` raised to 2 in both configurations, a rebuild, a fresh archive and a new
+upload, and the old build number can never be reused.
+
+Note what is now frozen until the next version: name, subtitle, description, keywords and
+screenshots. Promotional text, the support URL and the privacy policy URL stay editable, which is why
+the two GitHub Pages are the cheapest place to correct anything found later.
+
 ## App Store submission checklist
 
 GitHub Pages serves the repo root of `main` at https://alxnhfr-bit.github.io/brewlab/ (verified via
