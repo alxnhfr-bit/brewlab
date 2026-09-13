@@ -217,6 +217,12 @@ Manager, so CocoaPods is installed but not actually used by this project.
   them back and you have two sources of truth instead of one. Every upload after the first must raise
   `CURRENT_PROJECT_VERSION`, including a re-upload of identical code after a rejected or deleted
   build, or App Store Connect returns `ERROR ITMS-4238: Redundant Binary Upload`.
+  **Build 1 (1.0.0) was uploaded 2026-09-13 and passed validation, so the next upload must be build 2
+  in BOTH configurations.** Distribution signing is cloud-managed by Xcode 26: no Apple Distribution
+  certificate appears in the local keychain, and none is needed. Archive from Xcode (Product >
+  Archive) rather than the CLI, so the archive lands in the Organizer library; a `-archivePath` build
+  into /tmp will not appear there. Distribute with **App Store Connect**, never "TestFlight Internal
+  Only", which produces a build that can never be submitted for release.
 - **`App.xcscheme` is committed** at `ios/App/App.xcodeproj/xcshareddata/xcschemes/`, with the Archive
   action pinned to Release. It was previously autocreated into `xcuserdata`, which `ios/.gitignore`
   ignores, so nothing about the archive configuration was in the repo. `ios/ExportOptions.plist`
