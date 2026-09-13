@@ -134,7 +134,7 @@ first submission, so they are written down rather than improvised at the form.
 | Release option | **Manual** for a first release | So you choose the moment it goes live rather than it appearing the instant review passes |
 | Mac / Apple Vision Pro availability | **Off** | These toggles can default ON and would put an untested iPhone-only build on two more platforms |
 | EU trader status (DSA) | **Non-trader** | Free app, no IAP, no ads, no revenue, no intent to commercialise, which matches Apple's own "hobbyist" example. Publishes nothing; EU customers see a consumer-rights notice. **Must be re-declared as trader if a paid unlock is ever added.** Business > Agreements > Compliance |
-| SKU | `15grms-ios` | Arbitrary, permanent, never shown to users |
+| SKU | `15grms-ios-001` | Arbitrary, permanent, never shown to users |
 | Tax category | App Store Software (B2) | Required even at price zero |
 | EULA | Apple's standard | No custom terms needed |
 | Sign-in required | **No** | There is no account |
