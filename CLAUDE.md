@@ -179,7 +179,18 @@ Manager, so CocoaPods is installed but not actually used by this project.
   `src/`, so on an iPad it is a phone column floating in empty background. Orientation is likewise
   portrait only; the template allowed landscape, where the running-brew screen collides its own
   header, ring and controls inside an `overflow: hidden` container with no way to scroll out of it.
-  `UIRequiredDeviceCapabilities` is `arm64`, not the template's `armv7` (no 32-bit device runs iOS 15).
+  `UIRequiredDeviceCapabilities` is `arm64`, not the template's `armv7` (no 32-bit device runs iOS 16).
+- **`IPHONEOS_DEPLOYMENT_TARGET = 16.0`, raised from 15.0 on 2026-09-13, and the reason is layout not
+  API.** Verified by running the app: the session screen is clean at 440, 402 and 375 points, and
+  **breaks at 320**, where "POUR TO" collides with the step progress bar and the "NEXT:" line is
+  buried behind the PAUSE button. It cannot be scrolled out of, because RunningView is
+  `overflow: hidden` around fixed-size content (the 104px pour target plus the ring). Exactly one
+  device is affected: the iPhone SE 1st generation, 320x568, which tops out at iOS 15.8. Everything
+  else that runs iOS 15 (6s, 7, 8) is 375pt and fine. iOS 16 requires iPhone 8 or later, so raising
+  the floor makes **375pt the guaranteed minimum**, which is precisely the narrowest width verified
+  working. The alternative, a width breakpoint below 375, would have been the first responsive
+  exception in a design system that is deliberately fixed-size, to serve a phone Apple dropped in
+  2022. Do not lower this again without re-testing the session screen at the new minimum width.
   `CFBundleName` is hardcoded to `15GRMS` rather than `$(PRODUCT_NAME)`, which resolved to the literal
   string "App"; `PRODUCT_NAME` is deliberately left alone so `-scheme App` keeps working.
   `ITSAppUsesNonExemptEncryption` is `false`, which is both true (zero network calls) and the thing
