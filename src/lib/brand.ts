@@ -33,8 +33,13 @@ export const PRIVACY_URL = "https://alxnhfr-bit.github.io/brewlab/privacy.html"
 export const SUPPORT_URL = "https://alxnhfr-bit.github.io/brewlab/support.html"
 
 /**
- * Where "Send feedback" points. Currently the repo's issue tracker, which
- * works today and exposes no personal address. Swap this one line for a
- * hosted form (Tally, Formspree) when one exists; nothing else changes.
+ * Where "Send feedback" points: a hosted Tally form.
+ *
+ * It replaced the GitHub issue tracker, which required the person contacting
+ * us to hold a GitHub account. Guideline 1.5 wants support to actually be
+ * reachable, and asking a coffee drinker to sign up to a developer platform
+ * to report a bug is the kind of thing reviewers cite. The form is linked,
+ * never embedded, so the support and privacy pages keep making zero third
+ * party requests until someone deliberately taps through.
  */
-export const FEEDBACK_URL = "https://github.com/alxnhfr-bit/brewlab/issues/new"
+export const FEEDBACK_URL = "https://tally.so/r/xXAPPE"
