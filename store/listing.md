@@ -161,20 +161,32 @@ notifications (local, scheduled on device) and keep-awake during a brew.
 for smaller devices. 1 to 10 per size, and the Media Manager panel is the
 authority if it ever disagrees with this file.
 
-**Two of the five are stale as of 2026-09-12 and must be recaptured before
-upload.** They predate the attribution and recipe-name changes:
-- `01-brew-home.png`: shows bare bylines ("James Hoffmann · light roast"). The
-  app now renders "After James Hoffmann · light roast". Three of the four visible
-  rows are wrong.
-- `05-journal.png`: the top row reads "COMPETITION WINNER", a recipe name that no
-  longer exists anywhere in the build. It is now "Championship Style". This is
-  the worse of the two: a store screenshot advertising content the app does not
-  contain.
-- `02-session.png`, `03-complete.png` and `06-appearance.png` are unaffected.
+All five are RGB with no alpha channel, and all match the shipping build as of
+2026-09-13. `01-brew-home` and `05-journal` were recaptured that day: they
+predated the attribution change, so the first showed bare bylines ("James
+Hoffmann") instead of "After James Hoffmann", and the second advertised
+"COMPETITION WINNER", a recipe name no longer anywhere in the build.
 
-When recapturing, re-encode to RGB. All five are currently RGBA (fully opaque,
-but with an alpha channel). Alpha is a hard rejection for the app icon; whether
-it is enforced on screenshots is unconfirmed, and flattening costs nothing.
+**Recapturing is scripted, so do it whenever user-facing copy changes.**
+[seed-screenshot-state.mjs](seed-screenshot-state.mjs) writes a realistic
+journal and a pending tweak straight into the simulator's WKWebView
+localStorage, which avoids completing brews by hand. Its header carries the full
+procedure. Three things that cost an hour to learn the first time:
+- The device must be the **iPhone 17 Pro Max**. It gives 1320x2868; the plain
+  Pro gives 1206x2622, which is the wrong size and is silently accepted by
+  everything until App Store Connect rejects it.
+- Capture with `xcrun simctl io booted screenshot`. The iOS simulator automation
+  tool returns stale frames (it will happily show a screen the app cannot
+  currently be on); its taps are reliable, its screenshots are not.
+- The WebKit origin directory is created on first write, and its hash is per
+  install, so onboarding must be tapped through once before there is anything to
+  seed. Copying the path from a previous run silently seeds an origin the app
+  never reads.
+
+Captures come out RGBA but fully opaque, so flatten to RGB before uploading
+(one line of PIL, in the script header). Alpha is a hard rejection for the app
+icon; whether it is enforced on screenshots is unconfirmed, and flattening is
+free.
 
 **Paste the description and promo text unwrapped.** This file is hard-wrapped at
 about 80 columns and those newlines survive a copy-paste as mid-sentence line
