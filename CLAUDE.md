@@ -223,6 +223,12 @@ Manager, so CocoaPods is installed but not actually used by this project.
   Archive) rather than the CLI, so the archive lands in the Organizer library; a `-archivePath` build
   into /tmp will not appear there. Distribute with **App Store Connect**, never "TestFlight Internal
   Only", which produces a build that can never be submitted for release.
+- **TestFlight internal tester stuck on "No Builds Available":** the invitation email is the step that
+  links the Apple ID to the build, not just a notification, so until it arrives the TestFlight app
+  shows only "Redeem a code" no matter how long you wait. Seen on 2026-09-13 with the build already
+  showing "Ready to Test" in the group and automatic distribution on, i.e. the config was fine and the
+  tester record was the stale half. **Removing the tester from the group and re-adding them fixes it**
+  and is non-destructive. Try that before debugging anything else.
 - **`App.xcscheme` is committed** at `ios/App/App.xcodeproj/xcshareddata/xcschemes/`, with the Archive
   action pinned to Release. It was previously autocreated into `xcuserdata`, which `ios/.gitignore`
   ignores, so nothing about the archive configuration was in the repo. `ios/ExportOptions.plist`
