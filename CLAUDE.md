@@ -247,6 +247,17 @@ every step notification fired on time with the right pour target (Pause to 150g,
 Drawdown to 250g, then "Brew complete"), and reopening the app landed on Brew Complete showing the true
 3:00 duration, with the journal entry timestamped at the brew's real start.
 
+**Verified on real hardware from a TestFlight build, 2026-09-13 (1.0.0 build 1).** Everything that a
+simulator could not settle now has an answer, on an iPhone running iOS 26.5:
+- A three minute pour-over starts with **no notification prompt at all**, and Overnight Concentrate
+  **does** prompt. That asymmetry is the whole point of `UNATTENDED_STEP_MS` and it holds on device.
+- The background timer still lands correctly with the phone locked, with permission granted.
+- **The share-sheet journal export works.** This is the one worth stating plainly: the previous
+  `<a download>` implementation was silently dead in WKWebView and had shipped as a Settings row and a
+  sentence in the store description that both did nothing. The @capacitor/share + @capacitor/filesystem
+  path is confirmed working on a device, not just in a simulator.
+- Icon renders correctly on the home screen, app follows system light/dark.
+
 `npx cap add android` is NOT run yet (no Android Studio on this machine).
 
 ## Feedback and analytics (decided 2026-09-11)
