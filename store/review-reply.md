@@ -7,105 +7,73 @@ finding against the build. **No new binary is required**: build 1 stays, `CURREN
 stays at 1. Reply on the App Review page and paste the same text into App Review Information > Notes,
 which is what Apple asked for and what future submissions will reuse.
 
+**Both fields cap at 4,000 characters.** The block below is written to fit with margin. If it is ever
+edited, re-count before pasting rather than trusting that it still fits.
+
 ---
 
 ## Paste this into the App Review page reply, and into Notes
 
 ```
-15GRMS is a coffee brewing companion. It is fully offline, requires no account, and makes no
-network requests of any kind.
+15GRMS is an offline coffee brewing companion. No account, no in-app purchases, and no network
+requests of any kind.
 
 1. SCREEN RECORDING
-Attached. Recorded on an iPhone running iOS 26.5, starting from app launch.
+Attached, recorded on an iPhone running iOS 26.5, starting from app launch.
+The app has no account registration, login or deletion, no in-app purchases, and no user-generated
+content that is shared, so none of those flows appear. Journal notes are stored only on the device
+and are never uploaded or visible to anyone else, so there is no content reporting or blocking
+mechanism to show.
 
-The app has no account registration, no login, no account deletion, no user-generated content that
-is shared or distributed, and no paid content or in-app purchases, so none of those flows appear in
-the recording. Journal notes are free text stored only on the device; they are never uploaded,
-shared or visible to anyone else, so there is no content reporting or blocking mechanism to show.
+2. PURPOSE AND AUDIENCE
+For people who brew coffee by hand with a V60, an AeroPress or a cold brew vessel.
+Brewing by hand is a timed sequence with a different water target at each step, so doing it well
+means watching a clock and a scale while pouring from a kettle. 15GRMS runs the recipe as a timer:
+each step shows how much water should be on the scale at that moment and counts down against the
+wall clock, so the user can watch the kettle instead of the phone. Brews are logged automatically.
+If a cup tasted wrong, one tap on a taste chip produces a single conservative adjustment, with the
+reasoning, applied next time.
+Audience: home brewing enthusiasts. Rated 4+.
 
-2. PURPOSE AND TARGET AUDIENCE
-15GRMS is for people who brew coffee by hand, with a V60 dripper, an AeroPress or a cold brew
-vessel, and want repeatable results.
+3. SETUP AND ACCESS
+No login, credentials, sample files or configuration. Everything works on first launch with no
+network connection. The app asks which brewer you own, then opens on the Brew tab, where START BREW
+begins a guided brew. The Journal and Library tabs hold logged brews and settings.
 
-The problem: manual brewing is a timed sequence with a different water target at each step. Doing
-it well means watching a clock and a scale at the same time while pouring from a kettle. Generic
-timers do not know the recipe, and written recipes do not keep time.
+NOTIFICATIONS, PLEASE READ BEFORE TESTING
+Permission is requested only for brews long enough to need it. Ten of the twelve recipes finish in
+one to four minutes with the screen held awake and never ask, because an alert would tell the user
+something they are already watching. The two cold brew recipes steep for ten and twelve hours, and
+those do ask.
+To see the prompt: on the Brew tab tap the COLD filter chip, choose Overnight Concentrate or Room
+Temp Batch, and start it. Japanese Flash Brew is also listed under COLD but is brewed hot over ice
+and finishes in under three minutes, so it correctly does not ask.
+Notifications are scheduled locally and only alert brewing steps. No notification content is sent
+over a network.
 
-15GRMS runs the recipe as a timer. Each step shows how much water should be on the scale at that
-moment and counts down against the wall clock, so the user can watch the kettle instead of the
-phone. Every brew is logged automatically. If a cup tasted wrong, the user taps one taste chip and
-the app suggests a single conservative adjustment, explains the reasoning, and applies it the next
-time that recipe is brewed.
-
-Audience: home brewing enthusiasts, from someone who just bought a V60 to someone dialling in a new
-bag of beans. Age rating 4+, no objectionable content.
-
-3. SETTING UP AND ACCESSING THE MAIN FEATURES
-No login, no credentials, no sample files, no configuration. Everything works on first launch with
-no network connection.
-
-On first launch the app asks which brewer the user owns and then opens on the Brew tab.
-
-- Start a brew: Brew tab, tap START BREW on the card at the top, or tap any recipe in the list
-  below it and then Start brew.
-- During a brew: the large number is the water target in grams for the current step. The ring is
-  the step timer. Controls at the bottom are previous step, pause, next step. The X at the top left
-  offers Keep brewing or End brew.
-- After a brew: rate it, optionally tag how it tasted, and the adjustment is offered there.
-- Journal tab: every completed brew, logged automatically. Swipe a row left to delete. Tap a row to
-  edit it. The + button adds a brew by hand.
-- Library tab: favourites, and the settings icon opens appearance, haptics, journal export, and
-  links to the privacy policy and support page.
-
-NOTIFICATION PERMISSION, WORTH KNOWING BEFORE TESTING
-The app requests notification permission only for brews long enough to need it. Ten of the twelve
-recipes finish in one to four minutes with the screen held awake, so they never ask; a notification
-would tell the user something they are already looking at.
-
-The two cold brew recipes steep for ten and twelve hours, and those do ask.
-
-To see the permission prompt: on the Brew tab, tap the COLD filter chip, choose Overnight
-Concentrate or Room Temp Batch, and start it. Note that Japanese Flash Brew is also listed under
-COLD but is brewed hot over ice and finishes in under three minutes, so it correctly does not ask.
-
-Notifications are scheduled locally on the device and are used only to alert each brewing step. No
-notification content is ever sent over a network.
-
-4. EXTERNAL SERVICES, TOOLS OR PLATFORMS
-None. The app uses no data providers, no authentication service, no payment processor, no AI
-service, no analytics and no backend of any kind. It makes zero network requests. All twelve
-recipes and both fonts are bundled inside the app, and all user data is stored locally on the
-device. This is why the App Privacy answer is Data Not Collected.
-
-For completeness, the only third party reachable from the app is a hosted feedback form (Tally),
-opened in Safari if the user taps Send feedback in Settings. It is not part of any app
-functionality, and the app itself never contacts it.
-
-Technically the app is built with Capacitor, using only first-party and open-source Capacitor
-plugins for haptics, local notifications, keep-awake, splash screen, status bar, app lifecycle,
-share sheet, filesystem and the StoreKit review prompt. None of these transmit data.
+4. EXTERNAL SERVICES
+None. No data providers, authentication, payment processors, AI services, analytics or backend. The
+app makes zero network requests. All twelve recipes and both fonts are bundled, and all user data
+stays on the device. This is why the App Privacy answer is Data Not Collected.
+The only third party reachable from the app is a hosted feedback form (Tally), opened in Safari if
+the user taps Send feedback in Settings. It is not part of any app functionality and the app never
+contacts it.
+The app is built with Capacitor, using only first-party and open-source plugins. None transmit data.
 
 5. REGIONAL DIFFERENCES
-None. The app functions identically in every region. There is no geographic gating, no
-region-specific content, no regional pricing (it is free everywhere) and no server to vary
-behaviour. The app is localised in English (U.S.) only. Measurements are metric (grams, Celsius)
-in all regions.
+None. The app behaves identically everywhere: no geographic gating, no region-specific content,
+free in all territories, and no server to vary behaviour. English (U.S.) only; measurements are
+metric everywhere.
 
-6. REGULATED INDUSTRY OR PROTECTED THIRD-PARTY MATERIAL
-Neither applies.
-
-The app is not in a regulated industry. It provides no medical, health or dietary advice. The taste
-coaching adjusts brewing variables such as grind size and water temperature; it makes no health
-claims.
-
-On third-party material: brewing methods are processes and are not protectable. Where a recipe is
-associated with a person who popularised it, the app credits them as attribution and not as
-endorsement, displaying "After James Hoffmann", "After Tetsu Kasuya" and so on rather than a bare
-byline. No affiliation with or endorsement by any of these individuals is claimed or implied, and
-none has contributed to the app. The remaining recipes are credited to "Community". All recipe
-text, step instructions and explanatory copy were written for this app. The two typefaces, Archivo
-and Archivo Black, are licensed under the SIL Open Font License and bundled with the app. No
-third-party content is fetched, displayed or accessed.
+6. REGULATED INDUSTRY OR PROTECTED MATERIAL
+Neither applies. The app is not in a regulated industry and gives no medical, health or dietary
+advice; the coaching adjusts brewing variables such as grind size and water temperature.
+Brewing methods are processes and are not protectable. Where a recipe is associated with the person
+who popularised it, the app credits them as attribution rather than endorsement, showing "After
+James Hoffmann" and so on. No affiliation or endorsement is claimed or implied, and none of them
+contributed to the app. The other recipes are credited to "Community". All recipe text and copy
+were written for this app. The typefaces Archivo and Archivo Black are licensed under the SIL Open
+Font License. No third-party content is fetched, displayed or accessed.
 ```
 
 ---
