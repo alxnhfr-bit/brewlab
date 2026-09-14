@@ -36,19 +36,51 @@ and the legal groundwork around naming and privacy.
 
 ---
 
-## Stack, and why
+## Tech stack
 
-**Capacitor wrapping React + TypeScript + Vite.** Chosen on cost and fit. The app is a content and
-workflow product, not a gesture-heavy one, so a WebView core carried no meaningful UX penalty, and it
-kept a single codebase for an eventual Android target. React Native would have bought native
-rendering the product does not need, at the cost of rebuilding the whole UI layer.
+| Layer | Choice | Version |
+| --- | --- | --- |
+| UI | React + React DOM | 18.3.1 |
+| Language | TypeScript, `strict`, no `any` | 5.7.2 |
+| Build | Vite | 6.0.7 |
+| State | zustand + `persist` middleware | 5.0.14 |
+| Native shell | Capacitor (core / iOS / CLI) | 8.4.2 / 8.5.1 / 8.4.2 |
+| Icons | Phosphor Icons for React | 2.1.10 |
+| Type | Archivo + Archivo Black, self-hosted via Fontsource | 5.3.0 |
+| Lint | ESLint + typescript-eslint | 9.17.0 / 8.19.1 |
+| Toolchain | Node, Xcode | 24.16.0 / 26.6 |
+| Target | iOS 16+, iPhone only, portrait only, arm64 | |
 
-**zustand persisted to localStorage.** The entire app state is one store with a versioned migration.
-No backend in v1 by design; Supabase is scoped for v1.5.
+**Native plugins (9).** Local notifications, haptics, keep-awake, share sheet, filesystem, app
+lifecycle, splash screen, status bar, and the StoreKit review prompt. Resolved through **Swift
+Package Manager** rather than CocoaPods, which Capacitor 8 supports natively and which removes the
+Podfile from the build entirely.
+
+**Styling** is CSS custom properties driven by `data-palette` x `data-theme` attributes on the
+document element, with components using inline styles that reference only those tokens. No CSS
+framework, no CSS-in-JS runtime. Methods are coded by shape rather than colour, so the three palettes
+and both themes never carry semantic load.
+
+**No backend, no network calls, no analytics SDK, no third-party runtime services.**
+
+## Why this stack
+
+**Capacitor over React Native.** Decided on cost and fit. This is a content and workflow product, not
+a gesture-heavy one, so a WebView core carries no meaningful UX penalty, and it keeps a single
+codebase for an eventual Android target. React Native would have bought native rendering the product
+does not need, at the cost of rebuilding the whole UI layer.
+
+**zustand over Redux or Context.** The entire app state is one store with a versioned migration,
+persisted to localStorage. The session engine needs precise control over how state advances on a
+wall clock, and a small store with explicit actions made that legible rather than buried in
+reducers.
 
 **No analytics, deliberately.** App Store Connect already supplies downloads, retention and crashes
-with no SDK. Shipping zero network calls makes the privacy claim checkable, which is a selling point
-in this category and keeps review simple.
+with no SDK. Shipping zero network calls is what makes the privacy claim checkable rather than
+asserted, which is a selling point in this category and keeps review simple.
+
+**No backend in v1.** Supabase is scoped for v1.5, at which point the privacy policy, the privacy
+manifest and the App Store privacy answers all have to be rewritten together.
 
 ---
 
