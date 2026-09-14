@@ -281,8 +281,18 @@ simulator could not settle now has an answer, on an iPhone running iOS 26.5:
 approval.** App record Apple ID `6811369525`, SKU `15grms-ios-001`, Food & Drink + Lifestyle, 4+,
 free worldwide, iPhone only, EU trader status non-trader, App Privacy "Data Not Collected".
 
-If it is rejected, decide first whether the fix is metadata or binary, because that decision is
-expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
+**2026-09-13: came back as Guideline 2.1 Information Needed, NOT a rejection of the build.** This is
+the standard request for an account with no review history, and nothing was found wrong with the
+binary or the metadata. Apple asks for six things: a screen recording from a physical device, the
+purpose and audience, setup instructions, a list of external services, regional differences, and any
+regulated-industry or third-party-material documentation. Drafted answers are in
+[store/review-reply.md](store/review-reply.md).
+**No new binary. Build 1 stands and `CURRENT_PROJECT_VERSION` stays at 1.** An information request is
+answered by replying on the App Review page; the same submission continues. The answers also go into
+App Review Information > Notes, which is what Apple asked for and what future submissions reuse.
+
+If a future submission is genuinely rejected, decide first whether the fix is metadata or binary,
+because that decision is expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
 answers) is free to change and the SAME build can be resubmitted. Anything in the binary needs
 `CURRENT_PROJECT_VERSION` raised to 2 in both configurations, a rebuild, a fresh archive and a new
 upload, and the old build number can never be reused.
