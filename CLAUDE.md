@@ -290,6 +290,9 @@ regulated-industry or third-party-material documentation. Drafted answers are in
 **No new binary. Build 1 stands and `CURRENT_PROJECT_VERSION` stays at 1.** An information request is
 answered by replying on the App Review page; the same submission continues. The answers also go into
 App Review Information > Notes, which is what Apple asked for and what future submissions reuse.
+**Replied 2026-09-13 with the six answers and a screen recording from a physical device.** Both the
+reply and the Notes field cap at 4,000 characters, which the first draft (5,666) blew through; the
+version that shipped is 3,868. Awaiting the result on the same submission.
 
 If a future submission is genuinely rejected, decide first whether the fix is metadata or binary,
 because that decision is expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
