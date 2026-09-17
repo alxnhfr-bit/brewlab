@@ -295,10 +295,18 @@ the reply and the Notes field cap at 4,000 characters, which the first draft (5,
 version that shipped is 3,868.
 **Apple re-queued the submission on 2026-09-15 13:00** ("Last Updated By: Apple", and the Date
 Submitted field moved from the 13th to the 15th), so the review clock restarted there rather than at
-the reply. Status is **Waiting for Review**, which means queued and not yet opened by a reviewer, as
-distinct from **In Review**. A 2.1 round re-enters the queue rather than jumping it, so the usual
-"most reviews inside 24h" guidance does not apply. Do not press "Cancel Submission" or "remove this
-version from review": both withdraw it and return it to the back of the queue.
+the reply.
+
+**APPROVED 2026-09-17.** Review Completed, iOS App 1.0.0 (1) Approved, on the same submission and the
+same binary. The 2.1 information request cost four days and no new build, which is exactly what
+treating it as an information request rather than a rejection was worth: `CURRENT_PROJECT_VERSION` is
+still 1, so the next upload is build 2.
+
+Release is set to **automatic**, so it publishes without a further click and can take up to 24 hours
+to appear on the store. One caveat from Apple's own approval mail: an approved app still cannot be
+distributed if the contracts are not in effect (Business > Agreements, Tax, and Banking). For a
+free-app-only account the Free Apps agreement should already be active, but confirm the row reads
+Active rather than Pending, because nothing else surfaces this and the app would simply never appear.
 
 If a future submission is genuinely rejected, decide first whether the fix is metadata or binary,
 because that decision is expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
