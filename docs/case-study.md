@@ -1,8 +1,11 @@
 # 15GRMS — iOS brewing companion
 
-**Status:** approved by App Review 17 September 2026, version 1.0.0 (build 1), releasing on the App
-Store. Submitted 13 September; cleared a Guideline 2.1 information request (the standard request for
-an account with no review history) on the original binary, with no rebuild and no new build number.
+**Live on the App Store:** https://apps.apple.com/us/app/15grms/id6811369525
+
+Released 17 September 2026, version 1.0.0 (build 1). Free, Food & Drink, rated 4+, iPhone only,
+iOS 16+, 2.6 MB. Submitted 13 September and cleared a Guideline 2.1 information request (the standard
+request for a developer account with no review history) on the original binary, with no rebuild and
+no new build number.
 **Repo:** `brewlab` (internal codename) · **Bundle:** `com.alxnhfr.fifteengrams`
 
 ---

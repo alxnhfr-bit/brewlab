@@ -302,11 +302,17 @@ same binary. The 2.1 information request cost four days and no new build, which 
 treating it as an information request rather than a rejection was worth: `CURRENT_PROJECT_VERSION` is
 still 1, so the next upload is build 2.
 
-Release is set to **automatic**, so it publishes without a further click and can take up to 24 hours
-to appear on the store. One caveat from Apple's own approval mail: an approved app still cannot be
-distributed if the contracts are not in effect (Business > Agreements, Tax, and Banking). For a
-free-app-only account the Free Apps agreement should already be active, but confirm the row reads
-Active rather than Pending, because nothing else surfaces this and the app would simply never appear.
+**LIVE ON THE APP STORE 2026-09-17.** https://apps.apple.com/us/app/15grms/id6811369525
+(Apple ID `6811369525`). Verified through Apple's own lookup API rather than the page alone:
+`trackName` 15GRMS, seller Alexander Neuhofer, version 1.0.0, released 2026-09-17, Food & Drink plus
+Lifestyle, **`minimumOsVersion` 16.0**, 2.6 MB, 4+, Free, 130 supported devices. Every one of those
+matches what was configured, and the 16.0 is the 320pt session-screen fix showing up as the public
+compatibility line.
+
+Note for the next release: the store listing lags the binary in one direction only. `minimumOsVersion`
+is read from the uploaded build, so lowering `IPHONEOS_DEPLOYMENT_TARGET` again would silently widen
+the audience to devices the layout has never been tested on. Re-test the session screen at the new
+minimum width first; see the deployment target entry above.
 
 If a future submission is genuinely rejected, decide first whether the fix is metadata or binary,
 because that decision is expensive to get wrong. Metadata (description, keywords, screenshots, review notes, URLs, privacy
